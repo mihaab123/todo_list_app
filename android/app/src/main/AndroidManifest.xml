@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mihailov.todo_list_app">
    <application
-        android:label="todo_list_app"
-        android:icon="@mipmap/ic_launcher">
+        android:label="ToDo List"
+        android:icon="@mipmap/ic_todo_list">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

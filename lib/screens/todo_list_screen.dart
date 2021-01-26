@@ -36,7 +36,10 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
                   var result = await _todoService.deleteTodo(todoId);
                   if (result>0) {
                     Navigator.pop(context);
-                    widget.getTodos();
+                    setState(() {
+                      widget.getTodos();
+                    });
+
                     //_showSuccessSnackbar(Text("Deleted"));
                   }
                 },

@@ -166,7 +166,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   var result = await _categoryService.deleteCategory(categoryId);
                   if (result>0) {
                     Navigator.pop(context);
-                    getAllCategories();
+                    setState(() {
+                      getAllCategories();
+                    });
+
                     _showSuccessSnackbar(Text("snackbar_deleted").tr());
                   }
                 },

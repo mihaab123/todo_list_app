@@ -37,36 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _todoList.add(todoModel);
       });
     });
-  }
-
-  _deleteFormDialog(BuildContext context, int todoId) {
-    return showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (param) {
-          return AlertDialog(
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("cancel").tr(),
-                color: Colors.red,
-              ),
-              FlatButton(
-                onPressed: () async {
-                  var result = await _todoService.deleteTodo(todoId);
-                  if (result>0) {
-                    Navigator.pop(context);
-                    getAllTodos();
-                    //_showSuccessSnackbar(Text("Deleted"));
-                  }
-                },
-                child: Text("button_delete").tr(),
-                color: Theme.of(context).primaryColor,
-              ),
-            ],
-            title: Text("question_deleted").tr(),
-          );
-        });
+    _todoList.sort((taskA, taskB) => taskA.todoDate.compareTo(taskB.todoDate));
   }
 
   @override
