@@ -2,7 +2,7 @@ class Todo {
   int id;
   String title;
   String description;
-  String todoDate;
+  int todoDate;
   String category;
   int isFinished;
   todoMap(){

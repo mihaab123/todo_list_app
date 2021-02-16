@@ -20,11 +20,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   var _editCategoryDescriptionController = TextEditingController();
   var category;
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+  var _categoryColors = List<DropdownMenuItem>();
+  var _selectedColor;
+  final List<Color> colors = <Color>[Colors.red, Colors.blue, Colors.green, Colors.yellow, Colors.orange];
 
   @override
   void initState() {
     super.initState();
     getAllCategories();
+    getColors();
   }
 
   getAllCategories() async {
@@ -36,16 +40,35 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         categoryModel.name = category["name"];
         categoryModel.description = category["description"];
         categoryModel.id = category["id"];
+        categoryModel.color = category["color"];
         _categoriesList.add(categoryModel);
       });
     });
   }
-
+  getColors(){
+    _categoryColors.add(DropdownMenuItem(child: Text("blue"), value: Color(Colors.blue.value)),);
+    _categoryColors.add(DropdownMenuItem(child: Text("red"), value: Color(Colors.red.value)),);
+    _categoryColors.add(DropdownMenuItem(child: Text("green"), value: Color(Colors.green.value)),);
+    _categoryColors.add(DropdownMenuItem(child: Text("yellow"), value: Color(Colors.yellow.value)),);
+    _categoryColors.add(DropdownMenuItem(child: Text("orange"), value: Color(Colors.orange.value)),);
+    _categoryColors.add(DropdownMenuItem(child: Text("purple"), value: Color(Colors.purple.value)),);
+    if (_selectedColor == null){
+      _selectedColor = Color(Colors.red.value);
+    }
+  }
+  Color getCategoryColor(int catColor){
+    if(catColor != null){
+      return Color(catColor);
+    } else {
+      return Colors.black;
+    }
+  }
   _editCategory(BuildContext context, categoryID) async{
     category = await _categoryService.readCategoryById(categoryID);
     setState(() {
         _editCategoryNameController.text = category[0]["name"]??"No name"  ;
         _editCategoryDescriptionController.text = category[0]["description"]??"No description"  ;
+        _selectedColor = Color(category[0]["color"]);
     });
     _editFormDialog(context);
   }
@@ -66,6 +89,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 onPressed: () async {
                   _category.name = _categoryNameController.text;
                   _category.description = _categoryDescriptionController.text;
+                  _category.color = _selectedColor.value;
                   var result = await _categoryService.saveCategory(_category);
                   if (result>0) {
                     Navigator.pop(context);
@@ -92,6 +116,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         hintText: "description_hint".tr(),
                         labelText: "description_name".tr()),
                   ),
+                  DropdownButtonFormField(
+                    items: _categoryColors,
+                    value: _selectedColor,
+                    hint: Text("color_name").tr(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedColor = value;
+                      });
+                    },
+                  ),
                 ],
               ),
             ),
@@ -116,6 +150,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   _category.id = category[0]["id"];
                   _category.name = _editCategoryNameController.text;
                   _category.description = _editCategoryDescriptionController.text;
+                  _category.color = _selectedColor.value;
                   var result = await _categoryService.updateCategory(_category);
                   if (result>0) {
                     Navigator.pop(context);
@@ -141,6 +176,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     decoration: InputDecoration(
                         hintText: "description_hint".tr(),
                         labelText: "description_name".tr()),
+                  ),
+                  DropdownButtonFormField(
+                    items: _categoryColors,
+                    value: _selectedColor,
+                    hint: Text("color_name").tr(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedColor = value;
+                      });
+                    },
                   ),
                 ],
               ),
@@ -221,7 +266,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(_categoriesList[index].name),
+                    Text(_categoriesList[index].name, style: TextStyle(fontSize:20.0,color: getCategoryColor(_categoriesList[index].color)),),
                     IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {

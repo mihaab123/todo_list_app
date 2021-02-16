@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list_app/helpers/notificationHelper.dart';
 import 'package:todo_list_app/models/todo.dart';
 import 'package:todo_list_app/services/category_service.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import '../main.dart';
 
 class TodoScreen extends StatefulWidget {
   final Function() getTodos;
@@ -18,10 +21,12 @@ class _TodoScreenState extends State<TodoScreen> {
   var _todoTitleController = TextEditingController();
   var _todoDescriptionController = TextEditingController();
   var _todoDateController = TextEditingController();
+  var _todoTimeController = TextEditingController();
   var _selectedValue;
   var _categories = List<DropdownMenuItem>();
   DateTime _dateTime = DateTime.now();
   final DateFormat _dateFormat = DateFormat("yyyy-MM-dd");
+  final DateFormat _timeFormat = DateFormat("HH:mm");
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
 
   _loadCategories() async {
@@ -47,12 +52,25 @@ class _TodoScreenState extends State<TodoScreen> {
         initialDate: _dateTime,
         firstDate: DateTime(2000),
         lastDate: DateTime(2100));
-    if (_pickerDate != null && _pickerDate != _dateTime) {
+    DateTime curDate  = DateTime(_pickerDate.year,_pickerDate.month,_pickerDate.day,_dateTime.hour,_dateTime.minute);
+    if (_pickerDate != null && curDate != _dateTime) {
       setState(() {
-        _dateTime = _pickerDate;
+        _dateTime = curDate;
       });
     }
     _todoDateController.text = _dateFormat.format(_dateTime);
+  }
+  _selectedTodoTime(BuildContext context) async {
+    final TimeOfDay _pickerTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: _dateTime.hour, minute: _dateTime.minute));
+    DateTime curDate  = DateTime(_dateTime.year,_dateTime.month,_dateTime.day,_pickerTime.hour,_pickerTime.minute);
+    if (_pickerTime != null && curDate !=_dateTime) {
+      setState(() {
+        _dateTime = DateTime(_dateTime.year,_dateTime.month,_dateTime.day,_pickerTime.hour,_pickerTime.minute);
+      });
+    }
+    _todoTimeController.text = _timeFormat.format(_dateTime);
   }
   _showSuccessSnackbar(message){
     var _snackBar = SnackBar(content: message);
@@ -66,7 +84,9 @@ class _TodoScreenState extends State<TodoScreen> {
     if(widget.todo.id!=null){
       _todoTitleController.text = widget.todo.title;
       _todoDescriptionController.text = widget.todo.description;
-      _todoDateController.text = widget.todo.todoDate;
+      _dateTime = DateTime.fromMillisecondsSinceEpoch(widget.todo.todoDate);
+      _todoDateController.text = _dateFormat.format(_dateTime);
+      _todoTimeController.text = _timeFormat.format(_dateTime);
       _selectedValue = widget.todo.category;
     }
     else{
@@ -100,17 +120,45 @@ class _TodoScreenState extends State<TodoScreen> {
               decoration: InputDecoration(
                   labelText: "description_name".tr(), hintText: "description_hint".tr()),
             ),
-            TextField(
-              controller: _todoDateController,
-              readOnly: true,
-              decoration: InputDecoration(
-                  labelText: "date_name".tr(),
-                  hintText: "date_hint".tr(),
-                  prefixIcon: InkWell(
-                    onTap: () {_selectedTodoDate(context);},
-                    child: Icon(Icons.calendar_today),
-                  )),
-            ),
+
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: TextField(
+                          onTap: () {_selectedTodoDate(context);},
+                          controller: _todoDateController,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                              labelText: "date_name".tr(),
+                              hintText: "date_hint".tr(),
+                              /*prefixIcon: InkWell(
+                                onTap: () {_selectedTodoDate(context);},
+                                child: Icon(Icons.calendar_today),
+                              )*/
+                              ),
+
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: TextField(
+                          onTap: () {_selectedTodoTime(context);},
+                          controller: _todoTimeController,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            labelText: "time_name".tr(),
+                            hintText: "time_hint".tr(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
             DropdownButtonFormField(
               items: _categories,
               value: _selectedValue,
@@ -129,7 +177,7 @@ class _TodoScreenState extends State<TodoScreen> {
                   var _todoService = TodoService();
                   widget.todo.title = _todoTitleController.text;
                   widget.todo.description = _todoDescriptionController.text;
-                  widget.todo.todoDate = _todoDateController.text;
+                  widget.todo.todoDate = _dateTime.millisecondsSinceEpoch;
                   widget.todo.category = _selectedValue.toString();
                   var result = 0;
                   if (widget.todo.id == null){
@@ -144,6 +192,11 @@ class _TodoScreenState extends State<TodoScreen> {
                     Navigator.pop(context);
                     widget.getTodos();
                   }
+                  if (widget.todo.id != null){
+                    turnOffNotificationById(flutterLocalNotificationsPlugin, widget.todo.id);
+                  }
+                  scheduleNotification(
+                      flutterLocalNotificationsPlugin, widget.todo.id.toString(), _todoTitleController.text, _dateTime);
                 },
               color: Theme
                   .of(context)

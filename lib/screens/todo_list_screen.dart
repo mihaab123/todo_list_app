@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_list_app/models/category.dart';
 import 'package:todo_list_app/models/todo.dart';
 import 'package:todo_list_app/screens/todo_screen.dart';
+import 'package:todo_list_app/services/category_service.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -17,8 +19,35 @@ class TodoListScreen<T> extends StatefulWidget {
 
 class _TodoListScreenState<T> extends State<TodoListScreen> {
   TodoService _todoService = TodoService();
+  final DateFormat _dateFormat = DateFormat("yyyy-MM-dd HH:mm");
+  var _categoryService = CategoryService();
+  var _categoriesList = Map<String,int>();
 
+  @override
+  void initState() {
+    super.initState();
+    getAllCategories();
+  }
 
+  getAllCategories() async {
+    _categoriesList.clear();
+    var categories = await _categoryService.readCategories();
+    categories.forEach((category) {
+      setState(() {
+        _categoriesList.addAll({category["name"]: category["color"]});
+      });
+    });
+  }
+
+  Color getCategoryColor(String categoryId){
+    Color currentColor = Colors.white;
+    _categoriesList.forEach((k, v) {
+      if (k==categoryId){
+        currentColor = Color(v);
+      }
+    });
+     return currentColor;
+  }
   _deleteFormDialog(BuildContext context, int todoId) {
     return showDialog(
         context: context,
@@ -71,6 +100,15 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
                       borderRadius: BorderRadius.circular(0)
                   ),
                   child: ListTile(
+                    leading: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: 2,
+                          minHeight: 2,
+                          maxWidth: 2,
+                          maxHeight: 52,
+                        ),
+                       child: Text(" ", style: TextStyle(backgroundColor: getCategoryColor(widget._todoList[index].category),fontSize: 42.0),)),
+                    minLeadingWidth: 0,
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -83,13 +121,25 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
                             ))
                       ],
                     ),
-                    subtitle: Text("${widget._todoList[index].todoDate??"No Date"} - ${widget._todoList[index].category??"No Category"}",
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          decoration: widget._todoList[index].isFinished == 0
-                              ? TextDecoration.none
-                              : TextDecoration.lineThrough,
-                        )),
+                    subtitle: Row(
+                      children: [
+                        Text("${_dateFormat.format(DateTime.fromMillisecondsSinceEpoch(widget._todoList[index].todoDate))??"No Date"} - ",
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              decoration: widget._todoList[index].isFinished == 0
+                                  ? TextDecoration.none
+                                  : TextDecoration.lineThrough,
+                            )),
+                        Text("${widget._todoList[index].category??"No Category"}",
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              //color: Colors.red,
+                              decoration: widget._todoList[index].isFinished == 0
+                                  ? TextDecoration.none
+                                  : TextDecoration.lineThrough,
+                            )),
+                      ],
+                    ),
                     trailing: Checkbox(
                       onChanged: (value) {
                         widget._todoList[index].isFinished = value ? 1 : 0;
