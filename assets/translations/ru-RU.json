@@ -18,6 +18,8 @@
   "category_hint" : "Напишите категорию",
   "color_name" : "Цвет",
   "color_hint" : "Выберите цвет",
+  "repeat_name" : "Повторять",
+  "repeat_hint" : "Выберите время повторения",
   "button_save" : "Сохранить",
   "snackbar_created" : "Создана",
   "snackbar_saved" : "Сохранена",

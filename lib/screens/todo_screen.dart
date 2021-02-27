@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_picker/Picker.dart';
 import 'package:todo_list_app/helpers/notificationHelper.dart';
 import 'package:todo_list_app/models/todo.dart';
 import 'package:todo_list_app/services/category_service.dart';
@@ -22,12 +25,24 @@ class _TodoScreenState extends State<TodoScreen> {
   var _todoDescriptionController = TextEditingController();
   var _todoDateController = TextEditingController();
   var _todoTimeController = TextEditingController();
+  var _todoRepeatController = TextEditingController();
   var _selectedValue;
   var _categories = List<DropdownMenuItem>();
   DateTime _dateTime = DateTime.now();
   final DateFormat _dateFormat = DateFormat("yyyy-MM-dd");
   final DateFormat _timeFormat = DateFormat("HH:mm");
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+  int _currentRepeatInteger = 0;
+  static const PickerData2 = '''
+      [
+          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
+          11, 12, 13, 14, 15, 16, 17, 18, 19, 
+          20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+          30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+          40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+          50, 51, 52, 53, 54, 55, 56, 57, 58, 59 ],      
+          ["Hour","Day","Week","Month","Year"]
+      ]''';
 
   _loadCategories() async {
     var _categoryService = CategoryService();
@@ -72,6 +87,20 @@ class _TodoScreenState extends State<TodoScreen> {
     }
     _todoTimeController.text = _timeFormat.format(_dateTime);
   }
+  _selectedTodoRepeat(BuildContext context) async {
+    new Picker(
+        adapter: PickerDataAdapter<String>(pickerdata: new JsonDecoder().convert(PickerData2), isArray: true),
+        hideHeader: true,
+        title: new Text("repeat_name").tr(),
+        cancelText: "cancel".tr(),
+        confirmText: "button_save".tr(),
+        //selecteds: [],
+        onConfirm: (Picker picker, List value) {
+          _todoRepeatController.text = picker.getSelectedValues()[0].toString()+picker.getSelectedValues()[1].substring(0,1).toLowerCase();
+        }
+    ).showDialog(context);
+
+  }
   _showSuccessSnackbar(message){
     var _snackBar = SnackBar(content: message);
     _globalKey.currentState.showSnackBar(_snackBar);
@@ -87,6 +116,7 @@ class _TodoScreenState extends State<TodoScreen> {
       _dateTime = DateTime.fromMillisecondsSinceEpoch(widget.todo.todoDate);
       _todoDateController.text = _dateFormat.format(_dateTime);
       _todoTimeController.text = _timeFormat.format(_dateTime);
+      _todoRepeatController.text = widget.todo.repeat;
       _selectedValue = widget.todo.category;
     }
     else{
@@ -169,6 +199,15 @@ class _TodoScreenState extends State<TodoScreen> {
                 });
               },
             ),
+            TextField(
+              controller: _todoRepeatController,
+              readOnly: true,
+              decoration: InputDecoration(
+                  labelText: "repeat_name".tr(), hintText: "repeat_hint".tr()),
+              onTap: (){
+                _selectedTodoRepeat(context);
+              },
+            ),
             SizedBox(
               height: 20.0,
             ),
@@ -177,6 +216,7 @@ class _TodoScreenState extends State<TodoScreen> {
                   var _todoService = TodoService();
                   widget.todo.title = _todoTitleController.text;
                   widget.todo.description = _todoDescriptionController.text;
+                  widget.todo.repeat = _todoRepeatController.text;
                   widget.todo.todoDate = _dateTime.millisecondsSinceEpoch;
                   widget.todo.category = _selectedValue.toString();
                   var result = 0;

@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
         todoModel.todoDate = todo["todoDate"];
         todoModel.category = todo["category"];
         todoModel.isFinished = todo["isFinished"];
+        todoModel.repeat = todo["repeat"];
         todoModel.id = todo["id"];
         _todoList.add(todoModel);
       });

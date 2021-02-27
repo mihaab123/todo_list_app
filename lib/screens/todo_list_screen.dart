@@ -19,7 +19,7 @@ class TodoListScreen<T> extends StatefulWidget {
 
 class _TodoListScreenState<T> extends State<TodoListScreen> {
   TodoService _todoService = TodoService();
-  final DateFormat _dateFormat = DateFormat("yyyy-MM-dd HH:mm");
+  final DateFormat _dateFormat = DateFormat("yy-MM-dd HH:mm");
   var _categoryService = CategoryService();
   var _categoriesList = Map<String,int>();
 
@@ -177,9 +177,9 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
 
   Widget getCircleIcon(Todo currentTodo) {
     if (currentTodo.repeat!=null && currentTodo.repeat.isNotEmpty){
-      return Icon(Icons.autorenew);
+      return Icon(Icons.autorenew,color: Colors.white,);
     } else if(currentTodo.isFinished==1){
-      return Icon(Icons.check);
+      return Icon(Icons.check,color: Colors.white);
     } else{
       return Container();
     }
@@ -188,16 +188,22 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
 
   void completeTodo(int index, int value) {
     if(value == 0) {
-     widget._todoList[index].isFinished =  1;}
-    else{
+      if (widget._todoList[index].repeat.isEmpty){
+         widget._todoList[index].isFinished =  1;
+      }else {
+        widget._todoList[index].todoDate = repeatTodo(widget._todoList[index].todoDate,widget._todoList[index].repeat);
+      }
+    }else{
       widget._todoList[index].isFinished =  0;
     }
     _todoService.updateTodo(widget._todoList[index]);
-    widget._todoList.removeAt(index);
+    if (widget._todoList[index].repeat.isEmpty) {
+      widget._todoList.removeAt(index);
+    }
     setState(() {
 
     });
-    // remove the item from the data list backing the AnimatedList
+    /*// remove the item from the data list backing the AnimatedList
     String removedItem = widget._todoList.removeAt(index) as String;
 
 // This builder is just so that the animation has something
@@ -209,7 +215,31 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
     };
 
 // notify the AnimatedList that the item was removed
-    _listKey.currentState.removeItem(removeIndex, builder);
+    _listKey.currentState.removeItem(removeIndex, builder);*/
     //widget.getTodos();
+  }
+
+  int repeatTodo(int todoDate, String repeat) {
+    DateTime _dateTimeBegin = DateTime.fromMillisecondsSinceEpoch(todoDate);
+    int count = int.parse(repeat.substring(0,repeat.length-1));
+    String type = repeat.substring(repeat.length-1,repeat.length);
+    switch (type){
+      case "h":
+        _dateTimeBegin = DateTime(_dateTimeBegin.year, _dateTimeBegin.month , _dateTimeBegin.day, _dateTimeBegin.hour+count, _dateTimeBegin.minute, _dateTimeBegin.second);
+        break;
+      case "d":
+        _dateTimeBegin = DateTime(_dateTimeBegin.year, _dateTimeBegin.month , _dateTimeBegin.day+count, _dateTimeBegin.hour, _dateTimeBegin.minute, _dateTimeBegin.second);
+        break;
+      case "w":
+        _dateTimeBegin = DateTime(_dateTimeBegin.year, _dateTimeBegin.month , _dateTimeBegin.day+(count*7), _dateTimeBegin.hour, _dateTimeBegin.minute, _dateTimeBegin.second);
+        break;
+      case "m":
+        _dateTimeBegin = DateTime(_dateTimeBegin.year, _dateTimeBegin.month+count , _dateTimeBegin.day, _dateTimeBegin.hour+count, _dateTimeBegin.minute, _dateTimeBegin.second);
+        break;
+      case "y":
+        _dateTimeBegin = DateTime(_dateTimeBegin.year+count, _dateTimeBegin.month , _dateTimeBegin.day, _dateTimeBegin.hour+count, _dateTimeBegin.minute, _dateTimeBegin.second);
+        break;
+    }
+    return _dateTimeBegin.millisecondsSinceEpoch;
   }
 }

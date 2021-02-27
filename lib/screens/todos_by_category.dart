@@ -36,6 +36,7 @@ class _TodosByCategoryState extends State<TodosByCategory> {
         todoModel.category = todo["category"];
         todoModel.isFinished = todo["isFinished"];
         todoModel.id = todo["id"];
+        todoModel.repeat = todo["repeat"];
         _todoList.add(todoModel);
       });
     });

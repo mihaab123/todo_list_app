@@ -18,6 +18,8 @@
   "category_hint" : "Write a category",
   "color_name" : "Color",
   "color_hint" : "Choose a color",
+  "repeat_name" : "Repeat",
+  "repeat_hint" : "Pick a repeat time",
   "button_save" : "Save",
   "snackbar_created" : "Created",
   "snackbar_saved" : "Saved",
