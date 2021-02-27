@@ -24,6 +24,7 @@
   "snackbar_deleted" : "Deleted",
   "snackbar_updated" : "Updated",
   "home" : "Home",
+  "completed" : "Сompleted",
   "categories": "Categories",
   "categories_edit" : "Edit Categories Form",
   "categories_add" : "Add Categories Form"

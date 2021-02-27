@@ -22,7 +22,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   var _categoryColors = List<DropdownMenuItem>();
   var _selectedColor;
-  final List<Color> colors = <Color>[Colors.red, Colors.blue, Colors.green, Colors.yellow, Colors.orange];
 
   @override
   void initState() {

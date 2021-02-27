@@ -6,12 +6,12 @@ import 'package:todo_list_app/services/todo_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 
-class HomeScreen extends StatefulWidget {
+class CompletedScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _CompletedScreenState createState() => _CompletedScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _CompletedScreenState extends State<CompletedScreen> {
   TodoService _todoService = TodoService();
   List<Todo> _todoList = List<Todo>();
 
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   getAllTodos() async {
     _todoList.clear();
-    var todos = await _todoService.readTodos();
+    var todos = await _todoService.readTodosCompleted();
     todos.forEach((todo) {
       setState(() {
         var todoModel = Todo();
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("app_title").tr(),
+        title: Text("completed").tr(),
       ),
       drawer: DrawerNavigation(),
       body: TodoListScreen(_todoList,getAllTodos),

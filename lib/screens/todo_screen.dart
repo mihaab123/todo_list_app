@@ -192,11 +192,13 @@ class _TodoScreenState extends State<TodoScreen> {
                     Navigator.pop(context);
                     widget.getTodos();
                   }
-                  if (widget.todo.id != null){
-                    turnOffNotificationById(flutterLocalNotificationsPlugin, widget.todo.id);
+                  if (widget.todo.isFinished ==0) {
+                      if (widget.todo.id != null){
+                        turnOffNotificationById(flutterLocalNotificationsPlugin, widget.todo.id);
+                      }
+                      scheduleNotification(
+                          flutterLocalNotificationsPlugin, widget.todo.id.toString(), _todoTitleController.text, _dateTime);
                   }
-                  scheduleNotification(
-                      flutterLocalNotificationsPlugin, widget.todo.id.toString(), _todoTitleController.text, _dateTime);
                 },
               color: Theme
                   .of(context)

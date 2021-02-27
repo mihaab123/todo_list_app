@@ -5,6 +5,7 @@ class Todo {
   int todoDate;
   String category;
   int isFinished;
+  String repeat;
   todoMap(){
     var mapping = Map<String, dynamic>();
     mapping["id"] = id;
@@ -13,6 +14,7 @@ class Todo {
     mapping["todoDate"] = todoDate;
     mapping["category"] = category;
     mapping["isFinished"] = isFinished;
+    mapping["repeat"] = repeat;
 
     return mapping;
   }

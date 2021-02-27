@@ -11,7 +11,10 @@ class TodoService{
     return await _repository.insertData("todos", todo.todoMap());
   }
   readTodos() async{
-    return await _repository.readData("todos");
+    return await _repository.readDataByColumnName("todos", "isFinished", 0);
+  }
+  readTodosCompleted() async{
+    return await _repository.readDataByColumnName("todos", "isFinished", 1);
   }
   readTodoById(todoID) async{
     return await _repository.readDataById("todos",todoID);

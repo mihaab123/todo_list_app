@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:todo_list_app/models/ReminderNotification.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 final BehaviorSubject<ReminderNotification> didReceiveLocalNotificationSubject =
     BehaviorSubject<ReminderNotification>();
@@ -70,7 +71,7 @@ Future<void> scheduleNotification(
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
   var platformChannelSpecifics = NotificationDetails(
       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-  await flutterLocalNotificationsPlugin.schedule(0, 'Reminder', body,
+  await flutterLocalNotificationsPlugin.schedule(0, 'app_title'.tr(), body,
       scheduledNotificationDateTime, platformChannelSpecifics);
 }
 

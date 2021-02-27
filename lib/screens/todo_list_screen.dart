@@ -100,28 +100,30 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
                       borderRadius: BorderRadius.circular(0)
                   ),
                   child: ListTile(
-                    leading: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: 2,
-                          minHeight: 2,
-                          maxWidth: 2,
-                          maxHeight: 52,
-                        ),
-                       child: Text(" ", style: TextStyle(backgroundColor: getCategoryColor(widget._todoList[index].category),fontSize: 42.0),)),
+                    leading: GestureDetector(
+                      onTap: (){
+                        completeTodo(index, widget._todoList[index].isFinished);
+                      },
+                      child: CircleAvatar(backgroundColor: getCategoryColor(widget._todoList[index].category),
+                      child: getCircleIcon(widget._todoList[index]),),
+                    ),//Text(" ", style: TextStyle(backgroundColor: getCategoryColor(widget._todoList[index].category),fontSize: 42.0),)),
                     minLeadingWidth: 0,
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text("${widget._todoList[index].title??"No Title"}",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              decoration: widget._todoList[index].isFinished == 0
-                                  ? TextDecoration.none
-                                  : TextDecoration.lineThrough,
-                            ))
+                        Expanded(
+                          child: Text("${widget._todoList[index].title??"No Title"}",
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                decoration: widget._todoList[index].isFinished == 0
+                                    ? TextDecoration.none
+                                    : TextDecoration.lineThrough,
+                              )),
+                        )
                       ],
                     ),
-                    subtitle: Row(
+                    /*subtitle: Row(
                       children: [
                         Text("${_dateFormat.format(DateTime.fromMillisecondsSinceEpoch(widget._todoList[index].todoDate))??"No Date"} - ",
                             style: TextStyle(
@@ -139,16 +141,21 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
                                   : TextDecoration.lineThrough,
                             )),
                       ],
-                    ),
-                    trailing: Checkbox(
+                    ),*/
+                   trailing: Text("${_dateFormat.format(DateTime.fromMillisecondsSinceEpoch(widget._todoList[index].todoDate))??"No Date"}",
+                       style: TextStyle(
+                         fontSize: 12.0,
+                         decoration: widget._todoList[index].isFinished == 0
+                             ? TextDecoration.none
+                             : TextDecoration.lineThrough,
+                       )),
+                   /* trailing: Checkbox(
                       onChanged: (value) {
-                        widget._todoList[index].isFinished = value ? 1 : 0;
-                        _todoService.updateTodo(widget._todoList[index]);
-                        widget.getTodos();
+                        completeTodo(index, value);
                       },
                       activeColor: Theme.of(context).primaryColor,
                       value: widget._todoList[index].isFinished==1 ? true : false,
-                    ),
+                    ),*/
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => TodoScreen(getTodos: widget.getTodos,todo: widget._todoList[index])));
                     },
@@ -166,5 +173,43 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
               .push(MaterialPageRoute(builder: (context) => TodoScreen(getTodos: widget.getTodos,todo: new Todo()))),
         )
     );
+  }
+
+  Widget getCircleIcon(Todo currentTodo) {
+    if (currentTodo.repeat!=null && currentTodo.repeat.isNotEmpty){
+      return Icon(Icons.autorenew);
+    } else if(currentTodo.isFinished==1){
+      return Icon(Icons.check);
+    } else{
+      return Container();
+    }
+
+  }
+
+  void completeTodo(int index, int value) {
+    if(value == 0) {
+     widget._todoList[index].isFinished =  1;}
+    else{
+      widget._todoList[index].isFinished =  0;
+    }
+    _todoService.updateTodo(widget._todoList[index]);
+    widget._todoList.removeAt(index);
+    setState(() {
+
+    });
+    // remove the item from the data list backing the AnimatedList
+    String removedItem = widget._todoList.removeAt(index) as String;
+
+// This builder is just so that the animation has something
+// to work with before it disappears from view since the original
+// has already been deleted.
+    AnimatedListRemovedItemBuilder builder = (context, animation) {
+      // A method to build the Card widget.
+      return _buildItem(removedItem, animation);
+    };
+
+// notify the AnimatedList that the item was removed
+    _listKey.currentState.removeItem(removeIndex, builder);
+    //widget.getTodos();
   }
 }

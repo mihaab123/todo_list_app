@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/screens/categories_screen.dart';
+import 'package:todo_list_app/screens/completed_screen.dart';
 import 'package:todo_list_app/screens/home_screen.dart';
 import 'package:todo_list_app/screens/todos_by_category.dart';
 import 'package:todo_list_app/services/category_service.dart';
@@ -51,6 +52,11 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
               leading: Icon(Icons.home),
                 title: Text("home").tr(),
               onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen())),
+            ),
+            ListTile(
+              leading: Icon(Icons.check_box_outlined),
+              title: Text("completed").tr(),
+              onTap: ()=>Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CompletedScreen())),
             ),
             ListTile(
               leading: Icon(Icons.view_list),

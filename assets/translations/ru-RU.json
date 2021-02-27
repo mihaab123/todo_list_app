@@ -24,6 +24,7 @@
   "snackbar_deleted" : "Удалена",
   "snackbar_updated" : "Обновлена",
   "home" : "Домашная страница",
+  "completed" : "Завершенные",
   "categories": "Категории",
   "categories_edit" : "Форма редактирования категории",
   "categories_add" : "Форма добавления категории"
