@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_list_app/helpers/notificationHelper.dart';
 import 'package:todo_list_app/models/category.dart';
 import 'package:todo_list_app/models/todo.dart';
 import 'package:todo_list_app/screens/todo_screen.dart';
 import 'package:todo_list_app/services/category_service.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import '../main.dart';
 
 class TodoListScreen<T> extends StatefulWidget {
 
@@ -197,6 +200,17 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
       widget._todoList[index].isFinished =  0;
     }
     _todoService.updateTodo(widget._todoList[index]);
+    if (widget._todoList[index].isFinished ==0) {
+      if (widget._todoList[index].id != null){
+        turnOffNotificationById(flutterLocalNotificationsPlugin, widget._todoList[index].id);
+      }
+      scheduleNotification(
+          flutterLocalNotificationsPlugin, widget._todoList[index].id.toString(), widget._todoList[index].title, DateTime(widget._todoList[index].todoDate));
+    }else{
+      if (widget._todoList[index].id != null){
+        turnOffNotificationById(flutterLocalNotificationsPlugin, widget._todoList[index].id);
+      }
+    }
     if (widget._todoList[index].repeat.isEmpty) {
       widget._todoList.removeAt(index);
     }
