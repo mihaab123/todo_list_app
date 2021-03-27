@@ -41,6 +41,9 @@ class _TodosByCategoryState extends State<TodosByCategory> {
       });
     });
     _todoList.sort((taskA, taskB) => taskA.todoDate.compareTo(taskB.todoDate));
+    setState(() {
+
+    });
   }
   @override
   Widget build(BuildContext context) {

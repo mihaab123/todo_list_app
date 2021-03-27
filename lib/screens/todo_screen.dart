@@ -136,116 +136,118 @@ class _TodoScreenState extends State<TodoScreen> {
       appBar: AppBar(
         title: Text(widget.todo.id == null ? "create_todo".tr() : "update_todo".tr()),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _todoTitleController,
-              decoration: InputDecoration(
-                  labelText: "title_name".tr(), hintText: "title_hint".tr()),
-            ),
-            TextField(
-              controller: _todoDescriptionController,
-              decoration: InputDecoration(
-                  labelText: "description_name".tr(), hintText: "description_hint".tr()),
-            ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              TextField(
+                controller: _todoTitleController,
+                decoration: InputDecoration(
+                    labelText: "title_name".tr(), hintText: "title_hint".tr()),
+              ),
+              TextField(
+                controller: _todoDescriptionController,
+                decoration: InputDecoration(
+                    labelText: "description_name".tr(), hintText: "description_hint".tr()),
+              ),
 
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: TextField(
-                          onTap: () {_selectedTodoDate(context);},
-                          controller: _todoDateController,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                              labelText: "date_name".tr(),
-                              hintText: "date_hint".tr(),
-                              /*prefixIcon: InkWell(
-                                onTap: () {_selectedTodoDate(context);},
-                                child: Icon(Icons.calendar_today),
-                              )*/
-                              ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: TextField(
+                            onTap: () {_selectedTodoDate(context);},
+                            controller: _todoDateController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                                labelText: "date_name".tr(),
+                                hintText: "date_hint".tr(),
+                                /*prefixIcon: InkWell(
+                                  onTap: () {_selectedTodoDate(context);},
+                                  child: Icon(Icons.calendar_today),
+                                )*/
+                                ),
 
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: TextField(
-                          onTap: () {_selectedTodoTime(context);},
-                          controller: _todoTimeController,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            labelText: "time_name".tr(),
-                            hintText: "time_hint".tr(),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-            DropdownButtonFormField(
-              items: _categories,
-              value: _selectedValue,
-              hint: Text("category_name").tr(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedValue = value;
-                });
-              },
-            ),
-            TextField(
-              controller: _todoRepeatController,
-              readOnly: true,
-              decoration: InputDecoration(
-                  labelText: "repeat_name".tr(), hintText: "repeat_hint".tr()),
-              onTap: (){
-                _selectedTodoRepeat(context);
-              },
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            RaisedButton(
-                onPressed: () async {
-                  var _todoService = TodoService();
-                  widget.todo.title = _todoTitleController.text;
-                  widget.todo.description = _todoDescriptionController.text;
-                  widget.todo.repeat = _todoRepeatController.text;
-                  widget.todo.todoDate = _dateTime.millisecondsSinceEpoch;
-                  widget.todo.category = _selectedValue.toString();
-                  var result = 0;
-                  if (widget.todo.id == null){
-                    widget.todo.isFinished = 0;
-                    result = await _todoService.saveTodo(widget.todo);
-                  } else {
-                    result = await _todoService.updateTodo(widget.todo);
-                  };
-
-                  if (result>0) {
-                    _showSuccessSnackbar(Text("snackbar_created").tr());
-                    Navigator.pop(context);
-                    widget.getTodos();
-                  }
-                  if (widget.todo.isFinished ==0) {
-                      if (widget.todo.id != null){
-                        turnOffNotificationById(flutterLocalNotificationsPlugin, widget.todo.id);
-                      }
-                      scheduleNotification(
-                          flutterLocalNotificationsPlugin, widget.todo.id.toString(), _todoTitleController.text, _dateTime);
-                  }
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: TextField(
+                            onTap: () {_selectedTodoTime(context);},
+                            controller: _todoTimeController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: "time_name".tr(),
+                              hintText: "time_hint".tr(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+              DropdownButtonFormField(
+                items: _categories,
+                value: _selectedValue,
+                hint: Text("category_name").tr(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedValue = value;
+                  });
                 },
-              color: Theme
-                  .of(context)
-                  .primaryColor,
-              child: Text("button_save", style: TextStyle(color: Colors.white),).tr(),
-            )
-          ],
+              ),
+              TextField(
+                controller: _todoRepeatController,
+                readOnly: true,
+                decoration: InputDecoration(
+                    labelText: "repeat_name".tr(), hintText: "repeat_hint".tr()),
+                onTap: (){
+                  _selectedTodoRepeat(context);
+                },
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              RaisedButton(
+                  onPressed: () async {
+                    var _todoService = TodoService();
+                    widget.todo.title = _todoTitleController.text;
+                    widget.todo.description = _todoDescriptionController.text;
+                    widget.todo.repeat = _todoRepeatController.text;
+                    widget.todo.todoDate = _dateTime.millisecondsSinceEpoch;
+                    widget.todo.category = _selectedValue.toString();
+                    var result = 0;
+                    if (widget.todo.id == null){
+                      widget.todo.isFinished = 0;
+                      result = await _todoService.saveTodo(widget.todo);
+                    } else {
+                      result = await _todoService.updateTodo(widget.todo);
+                    };
+
+                    if (result>0) {
+                      _showSuccessSnackbar(Text("snackbar_created").tr());
+                      Navigator.pop(context);
+                      widget.getTodos();
+                    }
+                    if (widget.todo.isFinished ==0) {
+                        if (widget.todo.id != null){
+                          turnOffNotificationById(flutterLocalNotificationsPlugin, widget.todo.id);
+                        }
+                        scheduleNotification(
+                            flutterLocalNotificationsPlugin, widget.todo.id.toString(), _todoTitleController.text, _dateTime);
+                    }
+                  },
+                color: Theme
+                    .of(context)
+                    .primaryColor,
+                child: Text("button_save", style: TextStyle(color: Colors.white),).tr(),
+              )
+            ],
+          ),
         ),
       ),
     );

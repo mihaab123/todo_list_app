@@ -34,6 +34,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
         todoModel.category = todo["category"];
         todoModel.isFinished = todo["isFinished"];
         todoModel.id = todo["id"];
+        todoModel.repeat = todo["repeat"];
         _todoList.add(todoModel);
       });
     });

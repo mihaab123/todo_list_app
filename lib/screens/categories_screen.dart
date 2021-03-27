@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_list_app/models/category.dart';
 import 'package:todo_list_app/services/category_service.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -22,12 +23,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   var _categoryColors = List<DropdownMenuItem>();
   var _selectedColor;
+  SlidableController slidableController;
+  Animation<double> _rotationAnimation;
+  Color _fabColor = Colors.blue;
 
   @override
   void initState() {
+    slidableController = SlidableController(
+      onSlideAnimationChanged: handleSlideAnimationChanged,
+      onSlideIsOpenChanged: handleSlideIsOpenChanged,
+    );
     super.initState();
     getAllCategories();
     getColors();
+  }
+
+
+  void handleSlideAnimationChanged(Animation<double> slideAnimation) {
+    setState(() {
+      _rotationAnimation = slideAnimation;
+    });
+  }
+
+  void handleSlideIsOpenChanged(bool isOpen) {
+    setState(() {
+      _fabColor = isOpen ? Colors.green : Colors.blue;
+    });
   }
 
   getAllCategories() async {
@@ -251,33 +272,56 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       body: ListView.builder(
         itemCount: _categoriesList.length,
         itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
-            child: Card(
-              elevation: 8.0,
-              child: ListTile(
-                leading: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    _editCategory(context, _categoriesList[index].id);
+          return  Padding(
+              padding: EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
+              child: Slidable(
+                key: Key(_categoriesList[index].id.toString()),
+                controller: slidableController,
+                direction: Axis.horizontal,
+                /*dismissal: SlidableDismissal(
+                  child: SlidableDrawerDismissal(),
+                  onDismissed: (actionType) {
+                    /* _showSnackBar(
+                    context,
+                    actionType == SlideActionType.primary
+                        ? 'Dismiss Archive'
+                        : 'Dimiss Delete');
+                setState(() {
+                  //items.removeAt(index);
+                });*/
                   },
+                ),*/
+                actionPane: _getActionPane(index),
+               // actionExtentRatio: 0.25,
+                actions: [
+                  IconSlideAction(
+                    caption: 'button_edit'.tr(),
+                    color: Colors.blue,
+                    icon: Icons.edit,
+                    onTap: () {_editCategory(context, _categoriesList[index].id);},
+                  ),
+                ],
+                secondaryActions: <Widget>[
+                  IconSlideAction(
+                    caption: 'button_delete'.tr(),
+                    color: Colors.red,
+                    icon: Icons.delete,
+                    onTap: () {_deleteFormDialog(context,_categoriesList[index].id);},
+                  ),
+                ],
+                child: Card(
+                  elevation: 8.0,
+                  child: ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(_categoriesList[index].name, style: TextStyle(fontSize:20.0,color: getCategoryColor(_categoriesList[index].color)),),
+                      ],
+                    ),
+                    subtitle: Text(_categoriesList[index].description),
+                  ),
                 ),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(_categoriesList[index].name, style: TextStyle(fontSize:20.0,color: getCategoryColor(_categoriesList[index].color)),),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        _deleteFormDialog(context,_categoriesList[index].id);
-                      },
-                      color: Colors.red,
-                    )
-                  ],
-                ),
-                subtitle: Text(_categoriesList[index].description),
               ),
-            ),
           );
         },
       ),
@@ -287,5 +331,19 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       ),
     );
   }
+  static Widget _getActionPane(int index) {
+    switch (index % 4) {
+    case 0:
+      return SlidableBehindActionPane();
+    case 1:
+      return SlidableStrechActionPane();
+    case 2:
+      return SlidableScrollActionPane();
+    case 3:
+      return SlidableDrawerActionPane();
+    default:
+     return null;
+  }
+}
 
 }

@@ -29,5 +29,11 @@
   "completed" : "Сompleted",
   "categories": "Categories",
   "categories_edit" : "Edit Categories Form",
-  "categories_add" : "Add Categories Form"
+  "categories_add" : "Add Categories Form",
+  "separator_past" :  "Past",
+  "separator_today" :"Today",
+  "separator_tomorrow" :"Tomorrow",
+  "separator_next_week" :"Next week",
+  "separator_future" :"Future",
+  "button_edit" : "Edit"
 }

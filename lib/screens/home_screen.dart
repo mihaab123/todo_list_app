@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_list_app/helpers/drawer_navigation.dart';
 import 'package:todo_list_app/models/todo.dart';
 import 'package:todo_list_app/screens/todo_list_screen.dart';
+import 'package:todo_list_app/screens/todo_list_screen_animated_list.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 

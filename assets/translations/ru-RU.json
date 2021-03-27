@@ -29,5 +29,11 @@
   "completed" : "Завершенные",
   "categories": "Категории",
   "categories_edit" : "Форма редактирования категории",
-  "categories_add" : "Форма добавления категории"
+  "categories_add" : "Форма добавления категории",
+  "separator_past" :  "Прошедшие",
+  "separator_today" :"Сегодня",
+  "separator_tomorrow" :"Завтра",
+  "separator_next_week" :"Ближайшую неделю",
+  "separator_future" :"Будущие",
+  "button_edit" : "Редактировать"
 }
