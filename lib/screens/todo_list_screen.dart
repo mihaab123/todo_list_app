@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:todo_list_app/helpers/notificationHelper.dart';
 import 'package:todo_list_app/models/category.dart';
 import 'package:todo_list_app/models/todo.dart';
+import 'package:todo_list_app/providers/category_provider.dart';
 import 'package:todo_list_app/screens/todo_screen.dart';
 import 'package:todo_list_app/services/category_service.dart';
 import 'package:todo_list_app/services/todo_service.dart';
@@ -31,10 +33,10 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
   @override
   void initState() {
     super.initState();
-    getAllCategories();
+    //getAllCategories();
   }
 
-  getAllCategories() async {
+  /*getAllCategories() async {
     _categoriesList.clear();
     var categories = await _categoryService.readCategories();
     categories.forEach((category) {
@@ -42,16 +44,25 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
         _categoriesList.addAll({category["name"]: category["color"]});
       });
     });
-  }
+  }*/
 
-  Color getCategoryColor(String categoryId) {
+  Color getCategoryColor(String categoryId, CategoryProvider categoryProvider) {
     Color currentColor = Colors.white;
-    _categoriesList.forEach((k, v) {
+    final category = categoryProvider.categoriesList.firstWhere((element) =>
+      element.name == categoryId,
+          orElse: () {
+            return null;
+          });
+   /* _categoriesList.forEach((k, v) {
       if (k == categoryId) {
         currentColor = Color(v);
       }
-    });
-    return currentColor;
+    });*/
+    if (category == null) {
+      return currentColor;
+    } else {
+      return Color(category.color);
+    }
   }
 
   _deleteFormDialog(BuildContext context, Todo todo) {
@@ -114,6 +125,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final categoryProvider = Provider.of<CategoryProvider>(context);
     return Scaffold(
         body: Container(
           child: StickyGroupedListView<Todo, int>(
@@ -133,7 +145,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
                   ),
                 ),
             itemBuilder: (context, element) {
-              return todoCard(context, element);
+              return todoCard(context, element, categoryProvider);
             },
           ),
         ),
@@ -230,7 +242,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
     return _dateTimeBegin.millisecondsSinceEpoch;
   }
 
-  Widget todoCard(BuildContext context, Todo todo) {
+  Widget todoCard(BuildContext context, Todo todo, CategoryProvider categoryProvider) {
     //print('Item ${widget._todoList[index].title}');
     return GestureDetector(
       onLongPressEnd: (LongPressEndDetails details) {
@@ -250,7 +262,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
                 completeTodo(todo,todo.isFinished);
               },
               child: CircleAvatar(backgroundColor: getCategoryColor(
-                  todo.category),
+                  todo.category, categoryProvider),
                 child: getCircleIcon(todo),),
             ),
             //Text(" ", style: TextStyle(backgroundColor: getCategoryColor(widget._todoList[index].category),fontSize: 42.0),)),

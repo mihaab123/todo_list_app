@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_list_app/models/category.dart';
+import 'package:todo_list_app/providers/category_provider.dart';
 import 'package:todo_list_app/services/category_service.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
 
 import 'home_screen.dart';
 
@@ -16,7 +18,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   var _categoryDescriptionController = TextEditingController();
   var _category = Category();
   var _categoryService = CategoryService();
-  List<Category> _categoriesList = List<Category>();
   var _editCategoryNameController = TextEditingController();
   var _editCategoryDescriptionController = TextEditingController();
   var category;
@@ -34,7 +35,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       onSlideIsOpenChanged: handleSlideIsOpenChanged,
     );
     super.initState();
-    getAllCategories();
+    //getAllCategories();
     getColors();
   }
 
@@ -51,7 +52,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     });
   }
 
-  getAllCategories() async {
+  /*getAllCategories() async {
     _categoriesList.clear();
     var categories = await _categoryService.readCategories();
     categories.forEach((category) {
@@ -64,7 +65,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         _categoriesList.add(categoryModel);
       });
     });
-  }
+  }*/
   getColors(){
     _categoryColors.add(DropdownMenuItem(child: Text("blue"), value: Color(Colors.blue.value)),);
     _categoryColors.add(DropdownMenuItem(child: Text("red"), value: Color(Colors.red.value)),);
@@ -83,17 +84,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       return Colors.black;
     }
   }
-  _editCategory(BuildContext context, categoryID) async{
+  _editCategory(BuildContext context, categoryID, CategoryProvider categoryProvider) async{
     category = await _categoryService.readCategoryById(categoryID);
     setState(() {
         _editCategoryNameController.text = category[0]["name"]??"No name"  ;
         _editCategoryDescriptionController.text = category[0]["description"]??"No description"  ;
         _selectedColor = Color(category[0]["color"]);
     });
-    _editFormDialog(context);
+    _editFormDialog(context,categoryProvider);
   }
 
-  _showFormDialog(BuildContext context) {
+  _showFormDialog(BuildContext context, CategoryProvider categoryProvider) {
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -110,12 +111,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   _category.name = _categoryNameController.text;
                   _category.description = _categoryDescriptionController.text;
                   _category.color = _selectedColor.value;
-                  var result = await _categoryService.saveCategory(_category);
-                  if (result>0) {
+                  //var result = await _categoryService.saveCategory(_category);
+                  categoryProvider.saveCategory(_category);
+                  //if (result>0) {
                     Navigator.pop(context);
-                    getAllCategories();
+                    //getAllCategories();
                     _showSuccessSnackbar(Text("snackbar_saved").tr());
-                  }
+                  //}
                 },
                 child: Text("button_save").tr(),
                 color: Theme.of(context).primaryColor,
@@ -153,7 +155,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         });
   }
 
-  _editFormDialog(BuildContext context) {
+  _editFormDialog(BuildContext context, CategoryProvider categoryProvider) {
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -171,12 +173,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   _category.name = _editCategoryNameController.text;
                   _category.description = _editCategoryDescriptionController.text;
                   _category.color = _selectedColor.value;
-                  var result = await _categoryService.updateCategory(_category);
-                  if (result>0) {
+                  categoryProvider.updateCategory(_category);//await _categoryService.updateCategory(_category);
+                  //if (result>0) {
                     Navigator.pop(context);
-                    getAllCategories();
+                    //getAllCategories();
                     _showSuccessSnackbar(Text("snackbar_updated").tr());
-                  }
+                 // }
                 },
                 child: Text("button_update").tr(),
                 color: Theme.of(context).primaryColor,
@@ -214,7 +216,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         });
   }
 
-  _deleteFormDialog(BuildContext context, int categoryId) {
+  _deleteFormDialog(BuildContext context, Category category, CategoryProvider categoryProvider) {
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -228,15 +230,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
               FlatButton(
                 onPressed: () async {
-                  var result = await _categoryService.deleteCategory(categoryId);
-                  if (result>0) {
+                  categoryProvider.deleteCategory(category);
+                  //var result = await _categoryService.deleteCategory(categoryId);
+                  //if (result>0) {
                     Navigator.pop(context);
                     setState(() {
-                      getAllCategories();
+                      //getAllCategories();
                     });
 
                     _showSuccessSnackbar(Text("snackbar_deleted").tr());
-                  }
+                  //}
                 },
                 child: Text("button_delete").tr(),
                 color: Theme.of(context).primaryColor,
@@ -254,6 +257,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final categoryProvider = Provider.of<CategoryProvider>(context);
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
@@ -270,12 +274,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         title: Text("categories").tr(),
       ),
       body: ListView.builder(
-        itemCount: _categoriesList.length,
+        itemCount: categoryProvider.categoriesList.length,
         itemBuilder: (BuildContext context, int index) {
           return  Padding(
               padding: EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
               child: Slidable(
-                key: Key(_categoriesList[index].id.toString()),
+                key: Key(categoryProvider.categoriesList[index].id.toString()),
                 controller: slidableController,
                 direction: Axis.horizontal,
                 /*dismissal: SlidableDismissal(
@@ -298,7 +302,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     caption: 'button_edit'.tr(),
                     color: Colors.blue,
                     icon: Icons.edit,
-                    onTap: () {_editCategory(context, _categoriesList[index].id);},
+                    onTap: () {_editCategory(context, categoryProvider.categoriesList[index].id,categoryProvider);},
                   ),
                 ],
                 secondaryActions: <Widget>[
@@ -306,7 +310,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     caption: 'button_delete'.tr(),
                     color: Colors.red,
                     icon: Icons.delete,
-                    onTap: () {_deleteFormDialog(context,_categoriesList[index].id);},
+                    onTap: () {_deleteFormDialog(context,categoryProvider.categoriesList[index],categoryProvider);},
                   ),
                 ],
                 child: Card(
@@ -315,10 +319,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text(_categoriesList[index].name, style: TextStyle(fontSize:20.0,color: getCategoryColor(_categoriesList[index].color)),),
+                        Text(categoryProvider.categoriesList[index].name, style: TextStyle(fontSize:20.0,color: getCategoryColor(categoryProvider.categoriesList[index].color)),),
                       ],
                     ),
-                    subtitle: Text(_categoriesList[index].description),
+                    subtitle: Text(categoryProvider.categoriesList[index].description),
                   ),
                 ),
               ),
@@ -327,7 +331,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => _showFormDialog(context),
+        onPressed: () => _showFormDialog(context,categoryProvider),
       ),
     );
   }

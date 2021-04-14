@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_list_app/providers/category_provider.dart';
 import 'package:todo_list_app/screens/categories_screen.dart';
 import 'package:todo_list_app/screens/completed_screen.dart';
 import 'package:todo_list_app/screens/home_screen.dart';
@@ -13,23 +15,24 @@ class DrawerNavigation extends StatefulWidget {
 
 class _DrawerNavigationState extends State<DrawerNavigation> {
   List<Widget> _categoriesList = List<Widget>();
-  CategoryService _categoryService = CategoryService();
+ // CategoryService _categoryService = CategoryService();
 
   @override
   void initState() {
     super.initState();
-    getAllCategories();
+   // getAllCategories();
   }
 
   getAllCategories() async {
+    final categoryProvider = Provider.of<CategoryProvider>(context);
     _categoriesList.clear();
-    var categories = await _categoryService.readCategories();
-    categories.forEach((category) {
+    //var categories = categoryProvider.categoriesList;//await _categoryService.readCategories();
+    categoryProvider.categoriesList.forEach((category) {
       setState(() {
         _categoriesList.add(InkWell(
-          onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => new TodosByCategory(category: category["name"],))),
+          onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => new TodosByCategory(category: category.name,))),
           child: ListTile(
-            title: Text(category["name"],style: TextStyle(color: Color(category["color"])),),
+            title: Text(category.name,style: TextStyle(color: Color(category.color)),),
           ),
         ));
       });
@@ -37,6 +40,7 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
   }
   @override
   Widget build(BuildContext context) {
+    getAllCategories();
     return Container(
       child: Drawer(
         child: ListView(
