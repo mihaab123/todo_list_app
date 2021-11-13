@@ -5,7 +5,6 @@ import 'package:todo_list_app/screens/todo_list_screen.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-
 class CompletedScreen extends StatefulWidget {
   @override
   _CompletedScreenState createState() => _CompletedScreenState();
@@ -13,8 +12,7 @@ class CompletedScreen extends StatefulWidget {
 
 class _CompletedScreenState extends State<CompletedScreen> {
   TodoService _todoService = TodoService();
-  List<Todo> _todoList = List<Todo>();
-
+  List<Todo> _todoList = [];
 
   @override
   void initState() {
@@ -39,9 +37,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
       });
     });
     _todoList.sort((taskA, taskB) => taskA.todoDate.compareTo(taskB.todoDate));
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -51,7 +47,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
         title: Text("completed").tr(),
       ),
       drawer: DrawerNavigation(),
-      body: TodoListScreen(_todoList,getAllTodos),
+      body: TodoListScreen(_todoList, getAllTodos),
     );
   }
 }

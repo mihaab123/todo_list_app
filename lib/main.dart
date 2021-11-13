@@ -8,28 +8,29 @@ import 'helpers/notificationHelper.dart';
 import 'package:provider/provider.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 
 Future<void> main() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    notificationAppLaunchDetails =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-    await initNotifications(flutterLocalNotificationsPlugin);
-    requestIOSPermissions(flutterLocalNotificationsPlugin);
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  notificationAppLaunchDetails =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  await initNotifications(flutterLocalNotificationsPlugin);
+  requestIOSPermissions(flutterLocalNotificationsPlugin);
 
-    runApp(MultiProvider(providers: [
-            ChangeNotifierProvider.value(value: CategoryProvider.initialize()),
-        ],
-      child: EasyLocalization(
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider.value(value: CategoryProvider.initialize()),
+    ],
+    child: EasyLocalization(
         supportedLocales: [Locale('en', 'US'), Locale('ru', 'RU')],
         //supportedLocales: [ Locale('ru', 'RU')],
         path: 'assets/translations',
         //fallbackLocale: Locale('ru', 'RU'),
         fallbackLocale: Locale('en', 'US'),
-        child: App()
-      ),
-    )
-    //App()
-    );
+        child: App()),
+  )
+      //App()
+      );
 }

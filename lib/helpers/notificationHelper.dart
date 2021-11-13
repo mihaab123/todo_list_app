@@ -12,7 +12,8 @@ final BehaviorSubject<String> selectNotificationSubject =
 
 Future<void> initNotifications(
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
-  var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_todo_list');
+  var initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_todo_list');
   var initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -23,7 +24,7 @@ Future<void> initNotifications(
             id: id, title: title, body: body, payload: payload));
       });
   var initializationSettings = InitializationSettings(
-      initializationSettingsAndroid, initializationSettingsIOS);
+      android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
     if (payload != null) {
@@ -36,11 +37,15 @@ Future<void> initNotifications(
 Future<void> showNotification(
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      '0', 'Natalia', 'your channel description',
-      importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+      '0', 'Natalia',
+      channelDescription: 'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker');
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
   var platformChannelSpecifics = NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics);
   await flutterLocalNotificationsPlugin.show(
       0, 'Natalia title', 'plain body', platformChannelSpecifics,
       payload: 'item x');
@@ -65,12 +70,13 @@ Future<void> scheduleNotification(
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
     id,
     'Reminder notifications',
-    'Remember about it',
+    channelDescription: 'Remember about it',
     icon: '@mipmap/ic_todo_list',
   );
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
   var platformChannelSpecifics = NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics);
   await flutterLocalNotificationsPlugin.schedule(0, 'app_title'.tr(), body,
       scheduledNotificationDateTime, platformChannelSpecifics);
 }
@@ -83,12 +89,13 @@ Future<void> scheduleNotificationPeriodically(
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
     id,
     'Reminder notifications',
-    'Remember about it',
+    channelDescription: 'Remember about it',
     icon: 'smile_icon',
   );
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
   var platformChannelSpecifics = NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics);
   await flutterLocalNotificationsPlugin.periodicallyShow(
       0, 'Reminder', body, interval, platformChannelSpecifics);
 }

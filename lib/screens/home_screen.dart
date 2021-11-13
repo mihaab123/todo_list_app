@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:todo_list_app/helpers/drawer_navigation.dart';
 import 'package:todo_list_app/models/todo.dart';
 import 'package:todo_list_app/screens/todo_list_screen.dart';
-import 'package:todo_list_app/screens/todo_list_screen_animated_list.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'package:easy_localization/easy_localization.dart';
-
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -14,8 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TodoService _todoService = TodoService();
-  List<Todo> _todoList = List<Todo>();
-
+  List<Todo> _todoList = [];
 
   @override
   void initState() {
@@ -40,9 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
     _todoList.sort((taskA, taskB) => taskA.todoDate.compareTo(taskB.todoDate));
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -52,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("app_title").tr(),
       ),
       drawer: DrawerNavigation(),
-      body: TodoListScreen(_todoList,getAllTodos),
+      body: TodoListScreen(_todoList, getAllTodos),
     );
   }
 }

@@ -14,7 +14,7 @@ import '../main.dart';
 class TodoScreen extends StatefulWidget {
   final Function() getTodos;
   final Todo todo;
-  TodoScreen({this.getTodos,this.todo});
+  TodoScreen({this.getTodos, this.todo});
 
   @override
   _TodoScreenState createState() => _TodoScreenState();
@@ -32,7 +32,7 @@ class _TodoScreenState extends State<TodoScreen> {
   final DateFormat _dateFormat = DateFormat("yyyy-MM-dd");
   final DateFormat _timeFormat = DateFormat("HH:mm");
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
-  int _currentRepeatInteger = 0;
+  //int _currentRepeatInteger = 0;
   static const PickerData2 = '''
       [
           [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
@@ -49,25 +49,25 @@ class _TodoScreenState extends State<TodoScreen> {
     var categories = await _categoryService.readCategories();
     categories.forEach((category) {
       setState(() {
-        _categories.add(DropdownMenuItem(
-            child: Text(
-                category["name"]),
-            value: category["name"]),
-
+        _categories.add(
+          DropdownMenuItem(
+              child: Text(category["name"]), value: category["name"]),
         );
-      if (_selectedValue == null){
-        _selectedValue = category["name"];
-      }
+        if (_selectedValue == null) {
+          _selectedValue = category["name"];
+        }
       });
     });
   }
+
   _selectedTodoDate(BuildContext context) async {
     final DateTime _pickerDate = await showDatePicker(
         context: context,
         initialDate: _dateTime,
         firstDate: DateTime(2000),
         lastDate: DateTime(2100));
-    DateTime curDate  = DateTime(_pickerDate.year,_pickerDate.month,_pickerDate.day,_dateTime.hour,_dateTime.minute);
+    DateTime curDate = DateTime(_pickerDate.year, _pickerDate.month,
+        _pickerDate.day, _dateTime.hour, _dateTime.minute);
     if (_pickerDate != null && curDate != _dateTime) {
       setState(() {
         _dateTime = curDate;
@@ -75,33 +75,39 @@ class _TodoScreenState extends State<TodoScreen> {
     }
     _todoDateController.text = _dateFormat.format(_dateTime);
   }
+
   _selectedTodoTime(BuildContext context) async {
     final TimeOfDay _pickerTime = await showTimePicker(
         context: context,
         initialTime: TimeOfDay(hour: _dateTime.hour, minute: _dateTime.minute));
-    DateTime curDate  = DateTime(_dateTime.year,_dateTime.month,_dateTime.day,_pickerTime.hour,_pickerTime.minute);
-    if (_pickerTime != null && curDate !=_dateTime) {
+    DateTime curDate = DateTime(_dateTime.year, _dateTime.month, _dateTime.day,
+        _pickerTime.hour, _pickerTime.minute);
+    if (_pickerTime != null && curDate != _dateTime) {
       setState(() {
-        _dateTime = DateTime(_dateTime.year,_dateTime.month,_dateTime.day,_pickerTime.hour,_pickerTime.minute);
+        _dateTime = DateTime(_dateTime.year, _dateTime.month, _dateTime.day,
+            _pickerTime.hour, _pickerTime.minute);
       });
     }
     _todoTimeController.text = _timeFormat.format(_dateTime);
   }
+
   _selectedTodoRepeat(BuildContext context) async {
     new Picker(
-        adapter: PickerDataAdapter<String>(pickerdata: new JsonDecoder().convert(PickerData2), isArray: true),
+        adapter: PickerDataAdapter<String>(
+            pickerdata: new JsonDecoder().convert(PickerData2), isArray: true),
         hideHeader: true,
         title: new Text("repeat_name").tr(),
         cancelText: "cancel".tr(),
         confirmText: "button_save".tr(),
         //selecteds: [],
         onConfirm: (Picker picker, List value) {
-          _todoRepeatController.text = picker.getSelectedValues()[0].toString()+picker.getSelectedValues()[1].substring(0,1).toLowerCase();
-        }
-    ).showDialog(context);
-
+          _todoRepeatController.text =
+              picker.getSelectedValues()[0].toString() +
+                  picker.getSelectedValues()[1].substring(0, 1).toLowerCase();
+        }).showDialog(context);
   }
-  _showSuccessSnackbar(message){
+
+  _showSuccessSnackbar(message) {
     var _snackBar = SnackBar(content: message);
     _globalKey.currentState.showSnackBar(_snackBar);
   }
@@ -110,7 +116,7 @@ class _TodoScreenState extends State<TodoScreen> {
   void initState() {
     super.initState();
     _loadCategories();
-    if(widget.todo.id!=null){
+    if (widget.todo.id != null) {
       _todoTitleController.text = widget.todo.title;
       _todoDescriptionController.text = widget.todo.description;
       _dateTime = DateTime.fromMillisecondsSinceEpoch(widget.todo.todoDate);
@@ -118,23 +124,24 @@ class _TodoScreenState extends State<TodoScreen> {
       _todoTimeController.text = _timeFormat.format(_dateTime);
       _todoRepeatController.text = widget.todo.repeat;
       _selectedValue = widget.todo.category;
-    }
-    else{
-
+    } else {
       _todoDateController.text = _dateFormat.format(_dateTime);
     }
   }
+
   @override
-  void dispose(){
+  void dispose() {
     _todoDateController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
-        title: Text(widget.todo.id == null ? "create_todo".tr() : "update_todo".tr()),
+        title: Text(
+            widget.todo.id == null ? "create_todo".tr() : "update_todo".tr()),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -149,47 +156,50 @@ class _TodoScreenState extends State<TodoScreen> {
               TextField(
                 controller: _todoDescriptionController,
                 decoration: InputDecoration(
-                    labelText: "description_name".tr(), hintText: "description_hint".tr()),
+                    labelText: "description_name".tr(),
+                    hintText: "description_hint".tr()),
               ),
-
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: TextField(
-                            onTap: () {_selectedTodoDate(context);},
-                            controller: _todoDateController,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                                labelText: "date_name".tr(),
-                                hintText: "date_hint".tr(),
-                                /*prefixIcon: InkWell(
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: TextField(
+                        onTap: () {
+                          _selectedTodoDate(context);
+                        },
+                        controller: _todoDateController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          labelText: "date_name".tr(),
+                          hintText: "date_hint".tr(),
+                          /*prefixIcon: InkWell(
                                   onTap: () {_selectedTodoDate(context);},
                                   child: Icon(Icons.calendar_today),
                                 )*/
-                                ),
-
-                          ),
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: TextField(
-                            onTap: () {_selectedTodoTime(context);},
-                            controller: _todoTimeController,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: "time_name".tr(),
-                              hintText: "time_hint".tr(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: TextField(
+                        onTap: () {
+                          _selectedTodoTime(context);
+                        },
+                        controller: _todoTimeController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          labelText: "time_name".tr(),
+                          hintText: "time_hint".tr(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               DropdownButtonFormField(
                 items: _categories,
                 value: _selectedValue,
@@ -204,47 +214,56 @@ class _TodoScreenState extends State<TodoScreen> {
                 controller: _todoRepeatController,
                 readOnly: true,
                 decoration: InputDecoration(
-                    labelText: "repeat_name".tr(), hintText: "repeat_hint".tr()),
-                onTap: (){
+                    labelText: "repeat_name".tr(),
+                    hintText: "repeat_hint".tr()),
+                onTap: () {
                   _selectedTodoRepeat(context);
                 },
               ),
               SizedBox(
                 height: 20.0,
               ),
-              RaisedButton(
-                  onPressed: () async {
-                    var _todoService = TodoService();
-                    widget.todo.title = _todoTitleController.text;
-                    widget.todo.description = _todoDescriptionController.text;
-                    widget.todo.repeat = _todoRepeatController.text;
-                    widget.todo.todoDate = _dateTime.millisecondsSinceEpoch;
-                    widget.todo.category = _selectedValue.toString();
-                    var result = 0;
-                    if (widget.todo.id == null){
-                      widget.todo.isFinished = 0;
-                      result = await _todoService.saveTodo(widget.todo);
-                    } else {
-                      result = await _todoService.updateTodo(widget.todo);
-                    };
+              ElevatedButton(
+                onPressed: () async {
+                  var _todoService = TodoService();
+                  widget.todo.title = _todoTitleController.text;
+                  widget.todo.description = _todoDescriptionController.text;
+                  widget.todo.repeat = _todoRepeatController.text;
+                  widget.todo.todoDate = _dateTime.millisecondsSinceEpoch;
+                  widget.todo.category = _selectedValue.toString();
+                  var result = 0;
+                  if (widget.todo.id == null) {
+                    widget.todo.isFinished = 0;
+                    result = await _todoService.saveTodo(widget.todo);
+                  } else {
+                    result = await _todoService.updateTodo(widget.todo);
+                  }
+                  ;
 
-                    if (result>0) {
-                      _showSuccessSnackbar(Text("snackbar_created").tr());
-                      Navigator.pop(context);
-                      widget.getTodos();
+                  if (result > 0) {
+                    _showSuccessSnackbar(Text("snackbar_created").tr());
+                    Navigator.pop(context);
+                    widget.getTodos();
+                  }
+                  if (widget.todo.isFinished == 0) {
+                    if (widget.todo.id != null) {
+                      turnOffNotificationById(
+                          flutterLocalNotificationsPlugin, widget.todo.id);
                     }
-                    if (widget.todo.isFinished ==0) {
-                        if (widget.todo.id != null){
-                          turnOffNotificationById(flutterLocalNotificationsPlugin, widget.todo.id);
-                        }
-                        scheduleNotification(
-                            flutterLocalNotificationsPlugin, widget.todo.id.toString(), _todoTitleController.text, _dateTime);
-                    }
-                  },
-                color: Theme
-                    .of(context)
-                    .primaryColor,
-                child: Text("button_save", style: TextStyle(color: Colors.white),).tr(),
+                    scheduleNotification(
+                        flutterLocalNotificationsPlugin,
+                        widget.todo.id.toString(),
+                        _todoTitleController.text,
+                        _dateTime);
+                  }
+                },
+                //color: Theme
+                //    .of(context)
+                //    .primaryColor,
+                child: Text(
+                  "button_save",
+                  style: TextStyle(color: Colors.white),
+                ).tr(),
               )
             ],
           ),

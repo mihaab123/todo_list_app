@@ -31,13 +31,13 @@ class Reminder {
 
   static String parseRepeatIntervalToString(RepeatInterval repeat) {
     switch (repeat) {
-      case RepeatInterval.Daily:
+      case RepeatInterval.daily:
         return "Daily";
-      case RepeatInterval.EveryMinute:
+      case RepeatInterval.everyMinute:
         return "EveryMinute";
-      case RepeatInterval.Hourly:
+      case RepeatInterval.hourly:
         return "Hourly";
-      case RepeatInterval.Weekly:
+      case RepeatInterval.weekly:
         return "Weekly";
       default:
         return "Daily";
@@ -47,15 +47,15 @@ class Reminder {
   static RepeatInterval parseRepeatIntervalToValue(String repeat) {
     switch (repeat) {
       case "Daily":
-        return RepeatInterval.Daily;
+        return RepeatInterval.daily;
       case "EveryMinute":
-        return RepeatInterval.EveryMinute;
+        return RepeatInterval.everyMinute;
       case "Hourly":
-        return RepeatInterval.Hourly;
+        return RepeatInterval.hourly;
       case "Weekly":
-        return RepeatInterval.Weekly;
+        return RepeatInterval.weekly;
       default:
-        return RepeatInterval.Weekly;
+        return RepeatInterval.weekly;
     }
   }
 }

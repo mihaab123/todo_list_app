@@ -4,7 +4,6 @@ import 'package:todo_list_app/screens/todo_list_screen.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'home_screen.dart';
 
-
 class TodosByCategory extends StatefulWidget {
   final String category;
   TodosByCategory({this.category});
@@ -15,8 +14,7 @@ class TodosByCategory extends StatefulWidget {
 
 class _TodosByCategoryState extends State<TodosByCategory> {
   TodoService _todoService = TodoService();
-  List<Todo> _todoList = List<Todo>();
-
+  List<Todo> _todoList = [];
 
   @override
   void initState() {
@@ -41,26 +39,24 @@ class _TodosByCategoryState extends State<TodosByCategory> {
       });
     });
     _todoList.sort((taskA, taskB) => taskA.todoDate.compareTo(taskB.todoDate));
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: RaisedButton(
+        leading: ElevatedButton(
           onPressed: () => Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => HomeScreen())),
           child: Icon(
             Icons.arrow_back,
             color: Colors.white,
           ),
-          color: Theme.of(context).primaryColor,
-          elevation: 0.0,
+          //color: Theme.of(context).primaryColor,
+          // elevation: 0.0,
         ),
         title: Text(this.widget.category),
-
       ),
       body: Column(
         children: [
