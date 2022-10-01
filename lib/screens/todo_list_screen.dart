@@ -267,7 +267,8 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
         padding: EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
         child: Card(
           elevation: 8.0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: ListTile(
             leading: GestureDetector(
               onTap: () {

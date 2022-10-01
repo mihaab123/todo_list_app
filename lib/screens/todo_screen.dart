@@ -109,7 +109,7 @@ class _TodoScreenState extends State<TodoScreen> {
 
   _showSuccessSnackbar(message) {
     var _snackBar = SnackBar(content: message);
-    _globalKey.currentState.showSnackBar(_snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(_snackBar);
   }
 
   @override

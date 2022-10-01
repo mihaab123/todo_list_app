@@ -274,7 +274,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   _showSuccessSnackbar(message) {
     var _snackBar = SnackBar(content: message);
-    _globalKey.currentState.showSnackBar(_snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(_snackBar);
   }
 
   @override
@@ -346,7 +346,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ),
               ],
               child: Card(
-                elevation: 8.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                elevation: 4.0,
                 child: ListTile(
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
