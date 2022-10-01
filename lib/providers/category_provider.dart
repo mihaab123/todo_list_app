@@ -17,10 +17,6 @@ class CategoryProvider with ChangeNotifier {
     var categories = await _categoryService.readCategories();
     categories.forEach((category) {
       var categoryModel = Category.fromMap(category);
-      // categoryModel.name = category["name"];
-      // categoryModel.description = category["description"];
-      // categoryModel.id = category["id"];
-      // categoryModel.color = category["color"];
       _categoriesList.add(categoryModel);
     });
     notifyListeners();
