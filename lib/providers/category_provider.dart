@@ -1,47 +1,48 @@
-
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/models/category.dart';
 import 'package:todo_list_app/services/category_service.dart';
 
-class CategoryProvider with ChangeNotifier{
+class CategoryProvider with ChangeNotifier {
   CategoryService _categoryService = CategoryService();
   List<Category> _categoriesList = [];
 
-
-  CategoryProvider.initialize(){
+  CategoryProvider.initialize() {
     loadCategories();
   }
 
   get categoriesList => _categoriesList;
 
-  loadCategories() async{
+  loadCategories() async {
     _categoriesList.clear();
     var categories = await _categoryService.readCategories();
     categories.forEach((category) {
-        var categoryModel = Category();
-        categoryModel.name = category["name"];
-        categoryModel.description = category["description"];
-        categoryModel.id = category["id"];
-        categoryModel.color = category["color"];
-        _categoriesList.add(categoryModel);
+      var categoryModel = Category.fromMap(category);
+      // categoryModel.name = category["name"];
+      // categoryModel.description = category["description"];
+      // categoryModel.id = category["id"];
+      // categoryModel.color = category["color"];
+      _categoriesList.add(categoryModel);
     });
     notifyListeners();
   }
-  updateCategory(Category category) async{
+
+  updateCategory(Category category) async {
     _categoryService.updateCategory(category);
-    _categoriesList[_categoriesList.indexWhere((element) => element.id == category.id)] = category;
+    _categoriesList[_categoriesList
+        .indexWhere((element) => element.id == category.id)] = category;
     notifyListeners();
   }
-  saveCategory(Category category) async{
+
+  saveCategory(Category category) async {
     _categoryService.saveCategory(category);
     //_categoriesList.add(category);
     loadCategories();
     notifyListeners();
   }
-  deleteCategory(Category category) async{
+
+  deleteCategory(Category category) async {
     _categoryService.deleteCategory(category);
     _categoriesList.remove(category);
     notifyListeners();
   }
-
 }
