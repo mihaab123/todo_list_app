@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list_app/components/selected_theme_indicator.dart';
@@ -18,7 +19,7 @@ class ThemeSwitcher extends StatelessWidget {
     double themeSwitcherOptionsHeight = 60;
 
     return SwitcherContainer(
-      title: 'Theme',
+      title: 'theme'.tr(),
       content: SizedBox(
         height: themeSwitcherOptionsHeight,
         child: Consumer<ThemeProvider>(

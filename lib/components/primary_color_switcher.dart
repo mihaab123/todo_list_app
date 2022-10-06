@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list_app/components/primary_color_option.dart';
@@ -11,7 +12,7 @@ class PrimaryColorSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SwitcherContainer(
-      title: 'Primary Color',
+      title: 'primary_color'.tr(),
       content: Consumer<ThemeProvider>(
         builder: (c, themeProvider, _) {
           return Wrap(

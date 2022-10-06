@@ -36,5 +36,7 @@
   "separator_next_week" :"Ближайшую неделю",
   "separator_future" :"Будущие",
   "button_edit" : "Редактировать",
-  "settings" : "Settings"
+  "settings" : "Настройки",
+  "theme":"Тема",
+  "primary_color": "Основной цвет"
 }
