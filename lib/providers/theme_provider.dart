@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list_app/constans/app_colors.dart';
+import 'package:todo_list_app/constants/app_colors.dart';
 import 'package:todo_list_app/services/storage_service.dart';
 
 class ThemeProvider with ChangeNotifier {

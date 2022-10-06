@@ -4,6 +4,7 @@ import 'package:todo_list_app/providers/category_provider.dart';
 import 'package:todo_list_app/screens/categories_screen.dart';
 import 'package:todo_list_app/screens/completed_screen.dart';
 import 'package:todo_list_app/screens/home_screen.dart';
+import 'package:todo_list_app/screens/settings_screen.dart';
 import 'package:todo_list_app/screens/todos_by_category.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -48,10 +49,11 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    getAllCategories();
+    final categoryProvider = Provider.of<CategoryProvider>(context);
+    // getAllCategories();
     return Container(
       child: Drawer(
-        child: ListView(
+        child: Column(
           children: <Widget>[
             /* UserAccountsDrawerHeader(
               currentAccountPicture: CircleAvatar(
@@ -60,6 +62,9 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
                 accountName: Text("accountName"),
                 accountEmail: Text("accountEmail"),
             decoration: BoxDecoration(color: Theme.of(context).primaryColor),),*/
+            SizedBox(
+              height: 50,
+            ),
             ListTile(
               leading: Icon(Icons.home),
               title: Text("home").tr(),
@@ -79,9 +84,43 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
                   MaterialPageRoute(builder: (context) => CategoriesScreen())),
             ),
             Divider(),
-            Column(
-              children: _categoriesList,
-            )
+            Expanded(
+              child: ListView.builder(
+                  itemCount: categoryProvider.categoriesList.length,
+                  shrinkWrap: true,
+                  itemBuilder: ((context, index) => InkWell(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => new TodosByCategory(
+                                      category: categoryProvider
+                                          .categoriesList[index].name,
+                                    ))),
+                        child: ListTile(
+                          title: Text(
+                            categoryProvider.categoriesList[index].name,
+                            style: TextStyle(
+                                color: Color(categoryProvider
+                                    .categoriesList[index].color)),
+                          ),
+                        ),
+                      ))),
+            ),
+            Divider(),
+            Container(
+              child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: ListTile(
+                  leading: Icon(Icons.view_list),
+                  title: Text("settings").tr(),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => SettingsScreen())),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
           ],
         ),
       ),

@@ -35,5 +35,6 @@
   "separator_tomorrow" :"Tomorrow",
   "separator_next_week" :"Next week",
   "separator_future" :"Future",
-  "button_edit" : "Edit"
+  "button_edit" : "Edit",
+  "settings" : "Settings"
 }

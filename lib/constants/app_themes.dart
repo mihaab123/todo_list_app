@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:todo_list_app/constans/app_colors.dart';
+import 'package:todo_list_app/constants/app_colors.dart';
 import 'package:todo_list_app/models/app_theme.dart';
 
 class AppThemes {

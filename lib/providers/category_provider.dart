@@ -10,7 +10,7 @@ class CategoryProvider with ChangeNotifier {
     loadCategories();
   }
 
-  get categoriesList => _categoriesList;
+  List<Category> get categoriesList => _categoriesList;
 
   loadCategories() async {
     _categoriesList.clear();

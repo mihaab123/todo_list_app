@@ -35,5 +35,6 @@
   "separator_tomorrow" :"Завтра",
   "separator_next_week" :"Ближайшую неделю",
   "separator_future" :"Будущие",
-  "button_edit" : "Редактировать"
+  "button_edit" : "Редактировать",
+  "settings" : "Settings"
 }
