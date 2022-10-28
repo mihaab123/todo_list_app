@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/Picker.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_list_app/helpers/notificationHelper.dart';
 import 'package:todo_list_app/models/todo.dart';
+import 'package:todo_list_app/providers/todo_provider.dart';
 import 'package:todo_list_app/services/category_service.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_list_app/services/todo_service.dart';
@@ -12,9 +14,9 @@ import 'package:easy_localization/easy_localization.dart';
 import '../main.dart';
 
 class TodoScreen extends StatefulWidget {
-  final Function() getTodos;
+  final TodoType todoType;
   final Todo todo;
-  TodoScreen({this.getTodos, this.todo});
+  TodoScreen({this.todoType, this.todo});
 
   @override
   _TodoScreenState createState() => _TodoScreenState();
@@ -137,6 +139,7 @@ class _TodoScreenState extends State<TodoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _todoProvider = Provider.of<ToDoProvider>(context);
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
@@ -225,26 +228,23 @@ class _TodoScreenState extends State<TodoScreen> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  var _todoService = TodoService();
                   widget.todo.title = _todoTitleController.text;
                   widget.todo.description = _todoDescriptionController.text;
                   widget.todo.repeat = _todoRepeatController.text;
                   widget.todo.todoDate = _dateTime.millisecondsSinceEpoch;
                   widget.todo.category = _selectedValue.toString();
-                  var result = 0;
+
                   if (widget.todo.id == null) {
                     widget.todo.isFinished = 0;
-                    result = await _todoService.saveTodo(widget.todo);
-                  } else {
-                    result = await _todoService.updateTodo(widget.todo);
-                  }
-                  ;
-
-                  if (result > 0) {
+                    _todoProvider.saveTodo(widget.todo);
                     _showSuccessSnackbar(Text("snackbar_created").tr());
                     Navigator.pop(context);
-                    widget.getTodos();
+                  } else {
+                    _todoProvider.updateToDo(widget.todo);
+                    _showSuccessSnackbar(Text("snackbar_saved").tr());
+                    Navigator.pop(context);
                   }
+
                   if (widget.todo.isFinished == 0) {
                     if (widget.todo.id != null) {
                       turnOffNotificationById(
@@ -257,9 +257,6 @@ class _TodoScreenState extends State<TodoScreen> {
                         _dateTime);
                   }
                 },
-                //color: Theme
-                //    .of(context)
-                //    .primaryColor,
                 child: Text(
                   "button_save",
                   style: TextStyle(color: Colors.white),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_app/models/todo.dart';
+import 'package:todo_list_app/providers/todo_provider.dart';
 import 'package:todo_list_app/screens/todo_list_screen.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'home_screen.dart';
@@ -61,7 +62,7 @@ class _TodosByCategoryState extends State<TodosByCategory> {
       body: Column(
         children: [
           Expanded(
-            child: TodoListScreen(_todoList, getTodosByCategory),
+            child: TodoListScreen(TodoType.ALL_TODO),
           ),
         ],
       ),

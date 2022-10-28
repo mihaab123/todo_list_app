@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:todo_list_app/models/todo.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 
+enum TodoType { ALL_TODO, COMPLETED_TODO }
+
 class ToDoProvider with ChangeNotifier {
   TodoService _service = TodoService();
   List<Todo> _todoList = [];
@@ -14,6 +16,16 @@ class ToDoProvider with ChangeNotifier {
 
   get todoList => _todoList;
   get todoCompletedList => _todoCompletedList;
+
+  getCurrentList(TodoType todoType) {
+    switch (todoType) {
+      case TodoType.COMPLETED_TODO:
+        return _todoCompletedList;
+        break;
+      default:
+        return _todoList;
+    }
+  }
 
   loadToDos() async {
     _todoList.clear();
@@ -43,13 +55,13 @@ class ToDoProvider with ChangeNotifier {
 
   saveTodo(Todo todo) async {
     _service.saveTodo(todo);
-    //_categoriesList.add(category);
     loadToDos();
+    loadToDosCompleted();
     notifyListeners();
   }
 
   deleteTodo(Todo todo) async {
-    _service.deleteTodo(todo);
+    _service.deleteTodo(todo.id);
     _todoList.remove(todo);
     notifyListeners();
   }

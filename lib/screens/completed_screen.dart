@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list_app/helpers/drawer_navigation.dart';
+import 'package:todo_list_app/components/drawer_navigation.dart';
 import 'package:todo_list_app/models/todo.dart';
+import 'package:todo_list_app/providers/todo_provider.dart';
 import 'package:todo_list_app/screens/todo_list_screen.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -17,17 +18,6 @@ class _CompletedScreenState extends State<CompletedScreen> {
   @override
   void initState() {
     super.initState();
-    getAllTodos();
-  }
-
-  getAllTodos() async {
-    _todoList.clear();
-    var todos = await _todoService.readTodosCompleted();
-    todos.forEach((todo) {
-      _todoList.add(todo);
-    });
-    _todoList.sort((taskA, taskB) => taskA.todoDate.compareTo(taskB.todoDate));
-    setState(() {});
   }
 
   @override
@@ -37,7 +27,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
         title: Text("completed").tr(),
       ),
       drawer: DrawerNavigation(),
-      body: TodoListScreen(_todoList, getAllTodos),
+      body: TodoListScreen(TodoType.COMPLETED_TODO),
     );
   }
 }

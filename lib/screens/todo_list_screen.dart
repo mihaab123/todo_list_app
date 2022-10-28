@@ -14,9 +14,8 @@ import 'package:easy_localization/easy_localization.dart';
 import '../main.dart';
 
 class TodoListScreen<T> extends StatefulWidget {
-  final List<Todo> _todoList;
-  final Function() getTodos;
-  TodoListScreen(this._todoList, this.getTodos);
+  final TodoType todoType;
+  TodoListScreen(this.todoType);
 
   @override
   _TodoListScreenState createState() => _TodoListScreenState();
@@ -38,18 +37,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
   @override
   void initState() {
     super.initState();
-    //getAllCategories();
   }
-
-  /*getAllCategories() async {
-    _categoriesList.clear();
-    var categories = await _categoryService.readCategories();
-    categories.forEach((category) {
-      setState(() {
-        _categoriesList.addAll({category["name"]: category["color"]});
-      });
-    });
-  }*/
 
   Color getCategoryColor(String categoryId, CategoryProvider categoryProvider) {
     Color currentColor = Colors.white;
@@ -57,11 +45,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
         .firstWhere((element) => element.name == categoryId, orElse: () {
       return null;
     });
-    /* _categoriesList.forEach((k, v) {
-      if (k == categoryId) {
-        currentColor = Color(v);
-      }
-    });*/
+
     if (category == null) {
       return currentColor;
     } else {
@@ -69,7 +53,8 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
     }
   }
 
-  _deleteFormDialog(BuildContext context, Todo todo) {
+  _deleteFormDialog(
+      BuildContext context, Todo todo, ToDoProvider toDoProvider) {
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -83,22 +68,10 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
               ),
               TextButton(
                 onPressed: () async {
-                  var result = await _todoService.deleteTodo(todo.id);
-                  if (result > 0) {
-                    Navigator.pop(context);
-                    setState(() {
-                      // widget.getTodos();
-                      widget._todoList.remove(todo);
-                      //_list.removeAt(index);
-                    });
-
-                    //_showSuccessSnackbar(Text("Deleted"));
-                  }
+                  await toDoProvider.deleteTodo(todo);
+                  Navigator.pop(context);
                 },
                 child: Text("button_delete").tr(),
-                //color: Theme
-                //    .of(context)
-                //    .primaryColor,
               ),
             ],
             title: Text("question_deleted").tr(),
@@ -137,7 +110,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         body: PageWrapper(
           body: StickyGroupedListView<Todo, int>(
-            elements: _todoProvider.todoList,
+            elements: _todoProvider.getCurrentList(widget.todoType),
             groupBy: (element) => getSeparatorDate(element),
             //groupComparator: (value1, value2) => value2.compareTo(value1),
             itemComparator: (item1, item2) =>
@@ -152,7 +125,8 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
               ),
             ),
             itemBuilder: (context, element) {
-              return todoCard(context, element, _categoryProvider);
+              return todoCard(
+                  context, element, _categoryProvider, _todoProvider);
             },
           ),
         ),
@@ -160,7 +134,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
           child: Icon(Icons.add),
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
               builder: (context) =>
-                  TodoScreen(getTodos: widget.getTodos, todo: new Todo()))),
+                  TodoScreen(todoType: widget.todoType, todo: new Todo()))),
         ));
   }
 
@@ -177,7 +151,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
     }
   }
 
-  void completeTodo(Todo todo, int value) {
+  void completeTodo(Todo todo, int value, ToDoProvider toDoProvider) {
     if (value == 0) {
       if (todo.repeat.isEmpty) {
         todo.isFinished = 1;
@@ -187,7 +161,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
     } else {
       todo.isFinished = 0;
     }
-    _todoService.updateTodo(todo);
+    toDoProvider.updateToDo(todo);
     if (todo.isFinished == 0) {
       if (todo.id != null) {
         turnOffNotificationById(flutterLocalNotificationsPlugin, todo.id);
@@ -200,7 +174,8 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
       }
     }
     if (todo.repeat.isEmpty) {
-      widget._todoList.remove(todo);
+      // toDoProvider.deleteTodo(todo);
+      // widget._todoList.remove(todo);
       //_list.removeAt(index);
     }
     setState(() {});
@@ -243,7 +218,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
             _dateTimeBegin.year,
             _dateTimeBegin.month + count,
             _dateTimeBegin.day,
-            _dateTimeBegin.hour + count,
+            _dateTimeBegin.hour,
             _dateTimeBegin.minute,
             _dateTimeBegin.second);
         break;
@@ -252,7 +227,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
             _dateTimeBegin.year + count,
             _dateTimeBegin.month,
             _dateTimeBegin.day,
-            _dateTimeBegin.hour + count,
+            _dateTimeBegin.hour,
             _dateTimeBegin.minute,
             _dateTimeBegin.second);
         break;
@@ -261,11 +236,14 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
   }
 
   Widget todoCard(
-      BuildContext context, Todo todo, CategoryProvider categoryProvider) {
-    //print('Item ${widget._todoList[index].title}');
+    BuildContext context,
+    Todo todo,
+    CategoryProvider categoryProvider,
+    ToDoProvider todoProvider,
+  ) {
     return GestureDetector(
       onLongPressEnd: (LongPressEndDetails details) {
-        _deleteFormDialog(context, todo);
+        _deleteFormDialog(context, todo, todoProvider);
       },
       child: Padding(
         padding: EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
@@ -276,7 +254,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
           child: ListTile(
             leading: GestureDetector(
               onTap: () {
-                completeTodo(todo, todo.isFinished);
+                completeTodo(todo, todo.isFinished, todoProvider);
               },
               child: CircleAvatar(
                 backgroundColor:
@@ -284,7 +262,6 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
                 child: getCircleIcon(todo),
               ),
             ),
-            //Text(" ", style: TextStyle(backgroundColor: getCategoryColor(widget._todoList[index].category),fontSize: 42.0),)),
             minLeadingWidth: 0,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -304,30 +281,10 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
             subtitle: Text("${todo.category ?? "No Category"}",
                 style: TextStyle(
                   fontSize: 15.0,
-                  //color: Colors.red,
                   decoration: todo.isFinished == 0
                       ? TextDecoration.none
                       : TextDecoration.lineThrough,
                 )),
-            /*subtitle: Row(
-                          children: [
-                            Text("${_dateFormat.format(DateTime.fromMillisecondsSinceEpoch(widget._todoList[index].todoDate))??"No Date"} - ",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  decoration: widget._todoList[index].isFinished == 0
-                                      ? TextDecoration.none
-                                      : TextDecoration.lineThrough,
-                                )),
-                            Text("${widget._todoList[index].category??"No Category"}",
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  //color: Colors.red,
-                                  decoration: widget._todoList[index].isFinished == 0
-                                      ? TextDecoration.none
-                                      : TextDecoration.lineThrough,
-                                )),
-                          ],
-                        ),*/
             trailing: Text(
                 "${_dateFormat.format(DateTime.fromMillisecondsSinceEpoch(todo.todoDate)) ?? "No Date"}",
                 style: TextStyle(
@@ -336,19 +293,11 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
                       ? TextDecoration.none
                       : TextDecoration.lineThrough,
                 )),
-            /* trailing: Checkbox(
-                          onChanged: (value) {
-                            completeTodo(index, value);
-                          },
-                          activeColor: Theme.of(context).primaryColor,
-                          value: widget._todoList[index].isFinished==1 ? true : false,
-                        ),*/
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) =>
-                      TodoScreen(getTodos: widget.getTodos, todo: todo)));
+                      TodoScreen(todoType: widget.todoType, todo: todo)));
             },
-            //Text(widget._todoList[index].todoDate??"No Date"),
           ),
         ),
       ),
