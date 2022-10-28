@@ -68,20 +68,29 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
             ListTile(
               leading: Icon(Icons.home),
               title: Text("home").tr(),
-              onTap: () => Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => HomeScreen())),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
             ),
             ListTile(
               leading: Icon(Icons.check_box_outlined),
               title: Text("completed").tr(),
-              onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => CompletedScreen())),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => CompletedScreen()));
+              },
             ),
             ListTile(
               leading: Icon(Icons.view_list),
               title: Text("categories").tr(),
-              onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => CategoriesScreen())),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => CategoriesScreen()));
+              },
             ),
             Divider(),
             Expanded(
@@ -89,13 +98,16 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
                   itemCount: categoryProvider.categoriesList.length,
                   shrinkWrap: true,
                   itemBuilder: ((context, index) => InkWell(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => new TodosByCategory(
-                                      category: categoryProvider
-                                          .categoriesList[index].name,
-                                    ))),
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new TodosByCategory(
+                                        category: categoryProvider
+                                            .categoriesList[index].name,
+                                      )));
+                        },
                         child: ListTile(
                           title: Text(
                             categoryProvider.categoriesList[index].name,
@@ -111,10 +123,13 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
               child: Align(
                 alignment: FractionalOffset.bottomCenter,
                 child: ListTile(
-                  leading: Icon(Icons.view_list),
+                  leading: Icon(Icons.settings),
                   title: Text("settings").tr(),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => SettingsScreen())),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SettingsScreen()));
+                  },
                 ),
               ),
             ),

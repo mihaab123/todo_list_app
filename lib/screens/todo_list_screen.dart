@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
+import 'package:todo_list_app/components/page_wrapper.dart';
 import 'package:todo_list_app/helpers/notificationHelper.dart';
 import 'package:todo_list_app/models/todo.dart';
 import 'package:todo_list_app/providers/category_provider.dart';
+import 'package:todo_list_app/providers/todo_provider.dart';
 import 'package:todo_list_app/screens/todo_screen.dart';
 import 'package:todo_list_app/services/todo_service.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -129,11 +131,13 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final categoryProvider = Provider.of<CategoryProvider>(context);
+    final _categoryProvider = Provider.of<CategoryProvider>(context);
+    final _todoProvider = Provider.of<ToDoProvider>(context);
     return Scaffold(
-        body: Container(
-          child: StickyGroupedListView<Todo, int>(
-            elements: widget._todoList,
+        backgroundColor: Theme.of(context).primaryColor,
+        body: PageWrapper(
+          body: StickyGroupedListView<Todo, int>(
+            elements: _todoProvider.todoList,
             groupBy: (element) => getSeparatorDate(element),
             //groupComparator: (value1, value2) => value2.compareTo(value1),
             itemComparator: (item1, item2) =>
@@ -148,7 +152,7 @@ class _TodoListScreenState<T> extends State<TodoListScreen> {
               ),
             ),
             itemBuilder: (context, element) {
-              return todoCard(context, element, categoryProvider);
+              return todoCard(context, element, _categoryProvider);
             },
           ),
         ),

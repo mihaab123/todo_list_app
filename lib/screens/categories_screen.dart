@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:todo_list_app/components/page_wrapper.dart';
 import 'package:todo_list_app/models/category.dart';
 import 'package:todo_list_app/providers/category_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -16,11 +17,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   var _categoryNameController = TextEditingController();
   var _categoryDescriptionController = TextEditingController();
   var _category = Category();
-  //var _categoryService = CategoryService();
   var _editCategoryNameController = TextEditingController();
   var _editCategoryDescriptionController = TextEditingController();
   var category;
-  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   var _categoryColors = List<DropdownMenuItem>();
   var _selectedColor;
   SlidableController slidableController;
@@ -281,95 +280,97 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget build(BuildContext context) {
     final categoryProvider = Provider.of<CategoryProvider>(context);
     return Scaffold(
-      key: _globalKey,
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        leading: ElevatedButton(
-          onPressed: () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => HomeScreen())),
-          child: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          //color: Theme.of(context).primaryColor,
-          // elevation: 0.0,
-        ),
+        // leading: ElevatedButton(
+        //   onPressed: () => Navigator.of(context)
+        //       .push(MaterialPageRoute(builder: (context) => HomeScreen())),
+        //   child: Icon(
+        //     Icons.arrow_back,
+        //     color: Colors.white,
+        //   ),
+        //color: Theme.of(context).primaryColor,
+        // elevation: 0.0,
+        // ),
         title: Text("categories").tr(),
       ),
-      body: ListView.builder(
-        itemCount: categoryProvider.categoriesList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
-            child: Slidable(
-              key: Key(categoryProvider.categoriesList[index].id.toString()),
-              controller: slidableController,
-              direction: Axis.horizontal,
-              /*dismissal: SlidableDismissal(
-                  child: SlidableDrawerDismissal(),
-                  onDismissed: (actionType) {
-                    /* _showSnackBar(
-                    context,
-                    actionType == SlideActionType.primary
-                        ? 'Dismiss Archive'
-                        : 'Dimiss Delete');
-                setState(() {
-                  //items.removeAt(index);
-                });*/
-                  },
-                ),*/
-              actionPane: _getActionPane(index),
-              // actionExtentRatio: 0.25,
-              actions: [
-                IconSlideAction(
-                  caption: 'button_edit'.tr(),
-                  color: Colors.blue,
-                  icon: Icons.edit,
-                  onTap: () {
-                    _editCategory(
-                        context,
-                        categoryProvider.categoriesList[index],
-                        categoryProvider);
-                  },
-                ),
-              ],
-              secondaryActions: <Widget>[
-                IconSlideAction(
-                  caption: 'button_delete'.tr(),
-                  color: Colors.red,
-                  icon: Icons.delete,
-                  onTap: () {
-                    _deleteFormDialog(
-                        context,
-                        categoryProvider.categoriesList[index],
-                        categoryProvider);
-                  },
-                ),
-              ],
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                elevation: 4.0,
-                child: ListTile(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        categoryProvider.categoriesList[index].name,
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            color: getCategoryColor(
-                                categoryProvider.categoriesList[index].color)),
-                      ),
-                    ],
+      body: PageWrapper(
+        body: ListView.builder(
+          itemCount: categoryProvider.categoriesList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
+              child: Slidable(
+                key: Key(categoryProvider.categoriesList[index].id.toString()),
+                controller: slidableController,
+                direction: Axis.horizontal,
+                /*dismissal: SlidableDismissal(
+                    child: SlidableDrawerDismissal(),
+                    onDismissed: (actionType) {
+                      /* _showSnackBar(
+                      context,
+                      actionType == SlideActionType.primary
+                          ? 'Dismiss Archive'
+                          : 'Dimiss Delete');
+                  setState(() {
+                    //items.removeAt(index);
+                  });*/
+                    },
+                  ),*/
+                actionPane: _getActionPane(index),
+                // actionExtentRatio: 0.25,
+                actions: [
+                  IconSlideAction(
+                    caption: 'button_edit'.tr(),
+                    color: Colors.blue,
+                    icon: Icons.edit,
+                    onTap: () {
+                      _editCategory(
+                          context,
+                          categoryProvider.categoriesList[index],
+                          categoryProvider);
+                    },
                   ),
-                  subtitle:
-                      Text(categoryProvider.categoriesList[index].description),
+                ],
+                secondaryActions: <Widget>[
+                  IconSlideAction(
+                    caption: 'button_delete'.tr(),
+                    color: Colors.red,
+                    icon: Icons.delete,
+                    onTap: () {
+                      _deleteFormDialog(
+                          context,
+                          categoryProvider.categoriesList[index],
+                          categoryProvider);
+                    },
+                  ),
+                ],
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  elevation: 4.0,
+                  child: ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          categoryProvider.categoriesList[index].name,
+                          style: TextStyle(
+                              fontSize: 20.0,
+                              color: getCategoryColor(categoryProvider
+                                  .categoriesList[index].color)),
+                        ),
+                      ],
+                    ),
+                    subtitle: Text(
+                        categoryProvider.categoriesList[index].description),
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

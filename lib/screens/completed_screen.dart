@@ -24,17 +24,7 @@ class _CompletedScreenState extends State<CompletedScreen> {
     _todoList.clear();
     var todos = await _todoService.readTodosCompleted();
     todos.forEach((todo) {
-      setState(() {
-        var todoModel = Todo();
-        todoModel.title = todo["title"];
-        todoModel.description = todo["description"];
-        todoModel.todoDate = todo["todoDate"];
-        todoModel.category = todo["category"];
-        todoModel.isFinished = todo["isFinished"];
-        todoModel.id = todo["id"];
-        todoModel.repeat = todo["repeat"];
-        _todoList.add(todoModel);
-      });
+      _todoList.add(todo);
     });
     _todoList.sort((taskA, taskB) => taskA.todoDate.compareTo(taskB.todoDate));
     setState(() {});

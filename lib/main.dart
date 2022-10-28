@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:todo_list_app/providers/category_provider.dart';
 import 'package:todo_list_app/providers/theme_provider.dart';
+import 'package:todo_list_app/providers/todo_provider.dart';
 import 'package:todo_list_app/services/service_locator.dart';
 import 'package:todo_list_app/services/storage_service.dart';
 import 'package:todo_list_app/src/app.dart';
@@ -28,6 +29,7 @@ Future<void> main() async {
     providers: [
       ChangeNotifierProvider.value(value: CategoryProvider.initialize()),
       ChangeNotifierProvider.value(value: ThemeProvider(storageService)),
+      ChangeNotifierProvider.value(value: ToDoProvider.initialize()),
     ],
     child: EasyLocalization(
         supportedLocales: [Locale('en', 'US'), Locale('ru', 'RU')],

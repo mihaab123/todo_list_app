@@ -24,17 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _todoList.clear();
     var todos = await _todoService.readTodos();
     todos.forEach((todo) {
-      setState(() {
-        var todoModel = Todo();
-        todoModel.title = todo["title"];
-        todoModel.description = todo["description"];
-        todoModel.todoDate = todo["todoDate"];
-        todoModel.category = todo["category"];
-        todoModel.isFinished = todo["isFinished"];
-        todoModel.repeat = todo["repeat"];
-        todoModel.id = todo["id"];
-        _todoList.add(todoModel);
-      });
+      _todoList.add(todo);
     });
     _todoList.sort((taskA, taskB) => taskA.todoDate.compareTo(taskB.todoDate));
     setState(() {});
